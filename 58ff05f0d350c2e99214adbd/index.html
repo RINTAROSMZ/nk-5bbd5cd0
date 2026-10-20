@@ -1,0 +1,1064 @@
+<!doctype html>
+<html lang="ja" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ネガケイコ ミニゲーム案 v4</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@400;500;600&family=Shippori+Mincho+B1:wght@600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   畑田デザイン言語「静かな文房具」— 文書（レポート）用テンプレート
+   テーマは 宵(dark) / 朝(light) の二つだけ。UIアクセントは琥珀一色。
+   固定ヘッダーは置かない（PDF にしたとき邪魔になる）。
+   13px 未満の文字は置かない。英語の飾り文字は置かない。
+   ============================================================ */
+:root{
+  --ease: cubic-bezier(.22,.61,.21,1);
+  --serif-jp:"Shippori Mincho","Hiragino Mincho ProN","Yu Mincho",serif;
+  --serif-display:"Shippori Mincho B1","Shippori Mincho","Hiragino Mincho ProN",serif;
+  --mono:"IBM Plex Mono","SF Mono",Menlo,monospace;
+}
+
+/* 朝 = light */
+[data-theme="light"]{
+  --bg:#f6f2ea; --bg2:#efe9dd;
+  --ink:#2b2521; --ink-strong:#181310; --ink-soft:#5c5347; --sub:#7d7160;
+  --hair:rgba(43,37,33,.14); --hair-soft:rgba(43,37,33,.07);
+  --accent:#a4784a; --accent-soft:rgba(164,120,74,.12); --accent-strong:#8a6238;
+  --panel:rgba(255,253,248,.55);
+  --code-bg:rgba(43,37,33,.045);
+  --selection:rgba(164,120,74,.22);
+  --mark:rgba(164,120,74,.30);
+}
+
+/* 宵 = dark */
+[data-theme="dark"]{
+  --bg:#10131e; --bg2:#151a2a;
+  --ink:#ece5d8; --ink-strong:#fff9ec; --ink-soft:#bab1a1; --sub:#9a927f;
+  --hair:rgba(236,229,216,.16); --hair-soft:rgba(236,229,216,.08);
+  --accent:#d2a069; --accent-soft:rgba(210,160,105,.14); --accent-strong:#e6b77e;
+  --panel:rgba(255,255,255,.04);
+  --code-bg:rgba(255,255,255,.055);
+  --selection:rgba(210,160,105,.28);
+  --mark:rgba(210,160,105,.34);
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+::selection{background:var(--selection)}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--serif-jp);
+  font-feature-settings:"palt";
+  font-size:16.5px; line-height:2.0; letter-spacing:.02em;
+  color:var(--ink);
+  background:linear-gradient(160deg,var(--bg),var(--bg2));
+  min-height:100vh;
+  transition:background 1s var(--ease),color 1s var(--ease);
+  overflow-x:hidden;
+}
+
+/* ---- 背景の情緒演出（テーマごとに完全に消える。印刷では消す） ---- */
+.scene{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+[data-theme="light"] .scene-dark{display:none}
+[data-theme="dark"] .scene-light{display:none}
+.star{position:absolute;width:2px;height:2px;border-radius:50%;background:rgba(255,249,236,.8);animation:twinkle 7s ease-in-out infinite alternate}
+.star.s2{animation-duration:11s;width:1.5px;height:1.5px}
+@keyframes twinkle{from{opacity:.15}to{opacity:.85}}
+.fire{position:absolute;bottom:-140px;left:12%;width:420px;height:320px;border-radius:50%;
+  background:radial-gradient(circle,rgba(240,130,55,.20),rgba(255,190,95,.14) 45%,transparent 70%);
+  filter:blur(50px);animation:flicker 6.2s ease-in-out infinite alternate}
+.fire.f2{left:auto;right:8%;bottom:-180px;width:300px;height:240px;animation-duration:4.1s}
+@keyframes flicker{from{opacity:.7;transform:scale(1)}to{opacity:1;transform:scale(1.07)}}
+.cloud{position:absolute;border-radius:50%;filter:blur(64px);animation:drift 80s ease-in-out infinite alternate}
+.cloud.c1{top:8%;left:-10%;width:560px;height:200px;background:rgba(214,170,248,.26)}
+.cloud.c2{top:46%;right:-14%;width:640px;height:230px;background:rgba(220,178,246,.19);animation-duration:52s}
+@keyframes drift{from{transform:translateX(0)}to{transform:translateX(90px)}}
+.grain{position:fixed;inset:0;z-index:1;pointer-events:none;mix-blend-mode:overlay;opacity:.5;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 0.5 0 0 0 0 0.5 0 0 0 0 0.5 0 0 0 .35 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+/* ---- テーマ切り替え（右下の小さな釦。ヘッダーは置かない） ---- */
+.theme-toggle{
+  position:fixed;right:20px;bottom:20px;z-index:10;
+  font-family:var(--serif-jp);font-size:13px;letter-spacing:.1em;
+  color:var(--ink-soft);background:var(--panel);border:1px solid var(--hair);border-radius:999px;
+  padding:8px 16px;cursor:pointer;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  transition:color .5s var(--ease),border-color .5s var(--ease);
+}
+.theme-toggle:hover{color:var(--ink);border-color:var(--accent)}
+
+/* ---- 本文 ---- */
+main{position:relative;z-index:2;max-width:760px;margin:0 auto;padding:96px 28px 30vh}
+
+/* 表題: 何の文書か。副題に対象と日付。導入文に「なぜこれを読むか」を1〜2文 */
+.hero{margin-bottom:72px}
+.hero h1{
+  font-family:var(--serif-display);font-weight:600;font-size:30px;line-height:1.6;
+  letter-spacing:.06em;color:var(--ink-strong);
+}
+.hero h1::after{content:"";display:block;width:52px;height:1px;margin:26px 0 0;
+  background:linear-gradient(90deg,var(--accent),transparent)}
+.hero .sub{margin-top:18px;font-size:15.5px;color:var(--ink-soft);line-height:1.9}
+.hero .lede{margin-top:26px;font-size:16.5px;color:var(--ink);line-height:2.0}
+
+h2{
+  font-family:var(--serif-display);font-weight:600;font-size:22px;letter-spacing:.05em;line-height:1.6;
+  color:var(--ink-strong);margin:80px 0 28px;
+}
+h2::before{content:"";display:block;width:22px;height:1px;background:var(--accent);margin-bottom:18px}
+h3{font-family:var(--serif-display);font-weight:600;font-size:17.5px;letter-spacing:.05em;color:var(--ink-strong);margin:52px 0 18px}
+p{margin-bottom:1.6em}
+p:last-child{margin-bottom:0}
+a{color:var(--accent-strong);text-decoration:none;border-bottom:1px solid var(--hair);transition:border-color .4s var(--ease)}
+a:hover{border-color:var(--accent)}
+/* 太字: 各段落の核の語句。拾い読みの目印なので本文と見分けがつく太さにする */
+strong{font-family:var(--serif-display);font-weight:700;color:var(--ink-strong)}
+/* 段落の役割の札（背景・気づいた点・提案・決めてほしいこと）。段落の頭に置き、読み手がその段落の役割を先に知る */
+.role{display:inline-block;font-family:var(--serif-jp);font-size:14px;font-weight:600;letter-spacing:.06em;line-height:1.75;
+  color:var(--accent-strong);background:var(--accent-soft);border:1px solid var(--accent);border-radius:5px;
+  padding:0 .6em;margin-right:.7em;vertical-align:.1em;white-space:nowrap}
+/* 下線: 文書の結論・読み手に求めること・決めてほしいこと。節に1〜2か所。太字（strong）は各段落の核の語句に1〜2か所 */
+mark{background:linear-gradient(transparent 58%,var(--mark) 58%);color:inherit;padding:0 .08em}
+/* 冒頭の凡例: 太字と下線の意味を1行で示す */
+.skim-note{font-size:14px;color:var(--ink-soft);margin:-.6em 0 2em}
+em{font-style:normal;font-weight:600;color:var(--ink-strong)}
+
+ul,ol{margin:0 0 1.6em;padding-left:1.5em}
+li{margin-bottom:.5em}
+li::marker{color:var(--sub)}
+
+hr{border:none;margin:72px auto;text-align:center}
+hr::after{content:"◇";font-size:13px;letter-spacing:1.2em;text-indent:1.2em;color:var(--sub)}
+
+/* 引用。出どころは .source に必ず書く（誰が・いつ・どこで） */
+blockquote{
+  margin:1.8em 0;padding:4px 0 4px 24px;border-left:1px solid var(--hair);
+  color:var(--ink-soft);font-size:15.5px;
+}
+blockquote .source{display:block;margin-top:.6em;font-size:13.5px;color:var(--sub)}
+
+/* メタ情報（日時・場所・参加者など）。dt はラベル、dd は値 */
+.meta{margin:1.8em 0;display:grid;grid-template-columns:6em 1fr;gap:6px 18px;font-size:15.5px}
+.meta dt{color:var(--sub);font-size:14px;letter-spacing:.08em;padding-top:2px}
+.meta dd{margin:0;color:var(--ink)}
+
+/* 表。1列目は行の見出し（太字）。時刻・番号の列には .num を付ける */
+table{width:100%;border-collapse:collapse;margin:1.8em 0;font-size:15px;line-height:1.8}
+th{font-weight:600;font-size:13.5px;letter-spacing:.06em;color:var(--sub);
+  text-align:left;padding:10px 12px;border-bottom:1px solid var(--hair)}
+td{padding:12px;border-bottom:1px solid var(--hair-soft);color:var(--ink);vertical-align:top}
+td:first-child{font-weight:600;color:var(--ink-strong)}
+td.num,th.num{font-family:var(--mono);font-size:14px;color:var(--accent-strong);white-space:nowrap;font-weight:400}
+caption{caption-side:top;text-align:left;font-size:14px;color:var(--ink-soft);padding:0 0 10px}
+
+/* 囲み。決まったこと、確認してほしいこと、短い補足のまとまりに使う（冒頭の要点は .summary） */
+.panel{background:var(--panel);border:1px solid var(--hair-soft);border-radius:14px;
+  padding:24px 28px;margin:1.8em 0;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.panel .panel-title{font-family:var(--serif-display);font-weight:600;font-size:15px;letter-spacing:.06em;
+  color:var(--ink-strong);margin-bottom:12px}
+.panel ul,.panel ol{margin-bottom:0}
+.panel p:last-child{margin-bottom:0}
+
+/* 図。figcaption に「この図から読み取ること」を1文書く（図を飾りにしない） */
+figure{margin:2em 0}
+figure svg{display:block;width:100%;height:auto;font-family:var(--serif-jp);font-size:14px}
+figure svg text{fill:var(--ink)}
+figure svg .t-strong{fill:var(--ink-strong);font-weight:600}
+figure svg .t-sub{fill:var(--sub)}
+figure svg .t-accent{fill:var(--accent-strong)}
+figure svg .l-hair{stroke:var(--hair);fill:none}
+figure svg .l-accent{stroke:var(--accent);fill:none}
+figure svg .f-accent{fill:var(--accent)}
+figure svg .f-soft{fill:var(--accent-soft)}
+figure svg .f-panel{fill:var(--panel);stroke:var(--hair)}
+figure .chart{position:relative;width:100%;height:280px;overflow:hidden}
+figcaption{margin-top:12px;font-size:14.5px;color:var(--ink-soft);line-height:1.8}
+figcaption strong{color:var(--ink-strong)}
+
+/* 要点の囲み: 記事の冒頭に置く。番号つきの短い見出し3つ前後と、読んだあとにしてほしいこと1つ。ここだけ読めば記事の主張が分かる */
+.summary{margin:2.2em 0 1em;padding:26px 30px 24px;background:var(--panel);border:1px solid var(--hair-soft);
+  border-top:2px solid var(--accent);border-radius:4px 4px 14px 14px;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.summary-title{font-family:var(--serif-display);font-weight:600;font-size:15px;letter-spacing:.14em;color:var(--accent-strong);margin-bottom:16px}
+.points{list-style:none;padding:0;margin:0;counter-reset:pt;display:grid;gap:16px}
+.points li{counter-increment:pt;display:grid;grid-template-columns:2em 1fr;column-gap:.5em;margin:0}
+.points li::before{content:counter(pt);grid-row:1 / span 2;font-family:var(--mono);font-size:22px;line-height:1.45;color:var(--accent)}
+.pt-head{font-family:var(--serif-display);font-weight:700;font-size:18.5px;line-height:1.6;color:var(--ink-strong)}
+.pt-body{font-size:15px;line-height:1.85;color:var(--ink-soft)}
+.ask{margin:22px 0 0;padding-top:16px;border-top:1px solid var(--hair-soft);font-size:15.5px;line-height:1.9}
+.ask-label{display:block;font-family:var(--serif-display);font-weight:600;font-size:14px;letter-spacing:.1em;color:var(--accent-strong);margin-bottom:4px}
+@media (max-width:640px){ .summary{padding:22px 18px 20px} .pt-head{font-size:17px} }
+@media print{ .summary{backdrop-filter:none;-webkit-backdrop-filter:none;break-inside:avoid} }
+
+/* コード */
+code{font-family:var(--mono);font-size:.88em;background:var(--code-bg);padding:.15em .45em;border-radius:5px}
+pre{background:var(--panel);border:1px solid var(--hair-soft);border-radius:14px;
+  padding:22px 26px;margin:1.8em 0;overflow-x:auto;line-height:1.7}
+pre code{background:none;padding:0;font-size:13.5px;color:var(--ink-soft)}
+
+/* 脚: 作成者・日付・出どころ */
+footer{position:relative;z-index:2;max-width:760px;margin:0 auto;padding:20px 28px 72px;
+  font-size:13.5px;color:var(--sub);line-height:1.9;border-top:1px solid var(--hair-soft)}
+
+@media (max-width:640px){
+  body{font-size:15.5px}
+  main{padding:64px 20px 24vh}
+  .hero h1{font-size:25px}
+  h2{margin:60px 0 24px}
+  .meta{grid-template-columns:5em 1fr}
+  .panel{padding:20px 18px}
+}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important}
+  html{scroll-behavior:auto}
+}
+
+/* ---- 印刷・PDF: 常に朝の色。演出と釦は消す。ページの余白は @page で取る ---- */
+@media print{
+  [data-theme="dark"],[data-theme="light"]{
+    --bg:#f6f2ea; --bg2:#f6f2ea;
+    --ink:#2b2521; --ink-strong:#181310; --ink-soft:#5c5347; --sub:#7d7160;
+    --hair:rgba(43,37,33,.18); --hair-soft:rgba(43,37,33,.09);
+    --accent:#a4784a; --accent-soft:rgba(164,120,74,.16); --accent-strong:#8a6238;
+    --panel:rgba(255,253,248,.7); --code-bg:rgba(43,37,33,.05);
+    --mark:rgba(164,120,74,.30);
+  }
+  /* 余白まで地の色で塗る。本文だけ色付きで余白が白、という継ぎはぎの PDF にしない（本人 2026-10-07） */
+  @page{size:A4; margin:16mm 14mm; background:#f6f2ea}
+  html,body{background:var(--bg);-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body{font-size:12.5pt;line-height:1.85;min-height:auto}
+  .scene,.grain,.theme-toggle{display:none !important}
+  main{max-width:none;padding:0}
+  .hero{margin-bottom:40px}
+  h2{margin:44px 0 18px;break-after:avoid;break-inside:avoid}
+  h3{margin:28px 0 12px;break-after:avoid;break-inside:avoid}
+  .panel,table,blockquote,figure,pre{break-inside:avoid}
+  .panel{backdrop-filter:none;-webkit-backdrop-filter:none}
+  footer{padding-bottom:0}
+  a{border-bottom:none;color:var(--ink)}
+}
+
+/* このページだけの部品。ゲームと、ケイコが手を出す「画面の外の部品」を横に並べるため本文を少し広げる */
+main{max-width:840px}
+footer{max-width:840px}
+.howto{font-size:15px;color:var(--ink-soft);border-left:2px solid var(--accent);padding:4px 0 4px 18px;margin:0 0 2em}
+/* 試作の舞台: 左にゲームの画面、右にゲームを成り立たせている部品（説明書き・鍵盤・ログなど） */
+.stage{display:grid;grid-template-columns:minmax(0,360px) 1fr;gap:28px;align-items:start;margin:1.4em 0 1.6em}
+.frame{position:relative;width:100%;max-width:360px;transition:width .6s var(--ease),max-width .6s var(--ease),transform .6s var(--ease)}
+canvas.mg{display:block;width:100%;aspect-ratio:3/4;border-radius:18px;outline:none;cursor:pointer;box-shadow:0 0 0 1px var(--hair-soft);transition:box-shadow .4s var(--ease)}
+canvas.mg.is-active{box-shadow:0 0 0 2px var(--accent)}
+canvas.mg:focus-visible{box-shadow:0 0 0 3px var(--accent)}
+.side{font-size:15px;line-height:1.85}
+.side-label{font-size:13.5px;color:var(--sub);letter-spacing:.06em;margin:0 0 .4em}
+.lead{color:var(--ink-soft)}
+/* 説明書き（M1） */
+.rule{font-family:var(--serif-display);font-size:19px;color:var(--ink-strong);border-bottom:1px solid var(--hair);padding:.2em 0 .5em;margin:0 0 1.2em}
+/* ケイコが線で消した字と、ケイコの字 */
+.k-struck{color:var(--sub);text-decoration:line-through;text-decoration-color:var(--accent);text-decoration-thickness:2px;margin-right:.5em;font-size:.82em}
+.k-write,.k-write-solid{font-family:var(--serif-display);color:var(--accent-strong)}
+/* 鍵盤の絵（M2） */
+.keys{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 1em;min-height:46px}
+.kc{display:inline-flex;align-items:center;justify-content:center;min-width:46px;height:42px;padding:0 12px;border:1px solid var(--hair);border-bottom-width:3px;border-radius:7px;background:var(--bg);font-family:var(--mono);font-size:15px;color:var(--ink-strong)}
+.kc.wide{min-width:120px}
+.kc.hole{border-style:dashed;border-bottom-width:1px;background:transparent;color:transparent;min-width:120px}
+.kc.k-given{border-color:var(--accent);color:var(--accent-strong);font-family:var(--serif-jp)}
+.kc.esc{min-width:52px}
+.esc-line{font-size:14px;color:var(--ink-soft);display:flex;align-items:center;gap:10px;margin:0 0 1.2em}
+.pocket{border:1px dashed var(--accent);border-radius:12px;min-height:76px;padding:10px 12px;display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end;position:relative}
+.pocket-label{position:absolute;top:6px;left:12px;font-size:13px;color:var(--accent-strong)}
+/* 画面の居場所（M3） */
+.frame-home{position:relative;min-height:200px}
+.ghost{display:none;position:absolute;left:0;top:0;border:1.5px dashed var(--hair);border-radius:18px;align-items:center;justify-content:center;color:var(--sub);font-size:14px;aspect-ratio:3/4;max-width:360px}
+.ghost.on{display:flex}
+.frame.m3-small{max-width:216px}
+.frame.m3-intext{float:right;width:150px;max-width:150px;margin:.3em 0 .6em 1.2em}
+.frame.m3-intext.m3-tiny{width:70px;max-width:70px}
+.frame.m3-tiny{max-width:90px}
+.frame.m3-turn{transform:rotate(90deg)}
+.para3{min-height:3em}
+/* 名前の札とログ（M4） */
+.nameplate{display:flex;align-items:baseline;gap:10px;margin:0 0 10px;padding:6px 14px;border:1px solid var(--hair);border-radius:8px;background:var(--bg);width:max-content;transition:transform .5s var(--ease),opacity .5s var(--ease)}
+.nameplate .nm-label{font-size:13px;color:var(--sub)}
+.nameplate .nm{font-family:var(--serif-display);font-size:17px;color:var(--ink-strong)}
+.nameplate.k-peel{transform:rotate(-14deg) translateY(10px);opacity:.25}
+.log{list-style:none;padding:0;margin:0;display:grid;gap:8px}
+.log li{border-left:2px solid var(--hair);padding:2px 0 2px 12px;margin:0;font-size:15px}
+.log .who{font-size:13px;color:var(--sub);margin-right:.8em}
+/* 資料を暗くする（M5）: ケイコが「ここだけ読んで」と言ったとき、ほかの節を薄くする */
+body.k-dim main > *:not(.k-lit),body.k-dim footer{opacity:.16;transition:opacity .8s var(--ease)}
+main > *{transition:opacity .8s var(--ease)}
+#themeBtn.k-held{border-color:var(--accent);color:var(--accent-strong)}
+#themeBtn.k-held::after{content:"（ケイコが押さえている）"}
+/* 時間のバーと終わりの札（M6） */
+.timebar{height:6px;border-radius:3px;background:var(--hair-soft);margin:0 0 10px;max-width:360px;position:relative}
+.timebar .fill{height:100%;width:0;border-radius:3px;background:var(--accent)}
+.endcard{display:none;position:absolute;inset:0;border-radius:18px;background:var(--bg);flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center;padding:20px}
+.endcard.on{display:flex}
+.ec-score{font-family:var(--serif-display);font-size:18px;color:var(--ink-strong);margin:0}
+.ec-retry{font-size:15px;color:var(--accent-strong);margin:.6em 0 0;transition:transform .7s var(--ease),opacity .7s var(--ease)}
+.ec-retry.gone{transform:translate(160px,-120px) rotate(18deg);opacity:0}
+.ec-lock{font-family:var(--mono);font-size:15px;color:var(--ink-soft);margin:.4em 0 0}
+.ec-note{font-size:15px;color:var(--accent-strong);margin:.4em 0 0}
+/* ケイコの手と吹き出し（ページに1つずつ。画面の外まで手を伸ばす） */
+#kHand{position:fixed;left:0;top:0;width:96px;height:96px;z-index:50;pointer-events:none;opacity:0;transition:transform .7s var(--ease),opacity .4s var(--ease)}
+#kHand.on{opacity:1}
+#kHand svg{width:96px;height:96px;overflow:visible}
+#kHand path,#kHand rect,#kHand circle{fill:var(--bg);stroke:var(--accent-strong);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+#kHand .ln{fill:none}
+#kHand g{display:none}
+#kHand[data-pose="pinch"] g.p-pinch,#kHand[data-pose="pen"] g.p-pen,#kHand[data-pose="press"] g.p-press,#kHand[data-pose="stop"] g.p-stop{display:inline}
+#kSay{position:fixed;z-index:51;pointer-events:none;opacity:0;transform:translateY(6px);transition:opacity .35s var(--ease),transform .35s var(--ease);
+  background:var(--bg);border:1.2px solid var(--accent);border-radius:12px;padding:8px 14px;font-family:var(--serif-display);font-size:16px;color:var(--ink-strong);box-shadow:0 6px 18px var(--hair-soft)}
+#kSay::before{content:"ケイコ　";font-family:var(--serif-jp);font-size:13px;color:var(--accent-strong)}
+#kSay.on{opacity:1;transform:none}
+/* 種明かしの節: スケッチを右に寄せ、仕様を左に流す */
+.tane-fig{float:right;width:46%;margin:.2em 0 1em 1.4em}
+.tane-fig img{width:100%;height:auto;border-radius:10px;border:1px solid var(--hair-soft);display:block}
+.spec{display:grid;grid-template-columns:8.5em 1fr;gap:6px 18px;font-size:15.5px;line-height:1.85;margin:0 0 1em}
+.spec dt{color:var(--accent-strong);font-size:14.5px;font-weight:600;padding-top:2px}
+.spec dd{margin:0}
+.demo::after{content:"";display:block;clear:both}
+table.ideas{font-size:14.5px}
+table.ideas td{padding:10px 9px}
+/* 縦スクロール漫画（v1 から引き継ぎ） */
+.strip-area{display:grid;grid-template-columns:auto 1fr;gap:28px;align-items:start;margin:1.8em 0}
+.phone{position:relative;width:400px;height:600px;border-radius:30px;border:1px solid var(--hair);background:var(--bg);padding:14px 10px;box-shadow:0 0 0 6px var(--hair-soft)}
+.strip{position:relative;height:100%;overflow-y:auto;border-radius:18px;outline:none;scrollbar-width:thin;background:var(--bg2)}
+.strip:focus-visible{box-shadow:0 0 0 2px var(--accent)}
+.koma{margin:10px 10px 0;border:1.5px solid var(--ink-soft);border-radius:3px;background:var(--bg);padding:16px 14px;min-height:140px;display:flex;flex-direction:column;justify-content:flex-end;font-size:15px;line-height:1.8}
+.koma.tall{min-height:220px}
+.koma .nar{font-size:14px;color:var(--ink-soft)}
+.koma .serif-line{font-family:var(--serif-display);font-size:16.5px;color:var(--ink-strong)}
+.koma .who{font-size:13px;color:var(--sub)}
+.koma.game{margin:10px 4px 0;padding:2px;min-height:0;border-color:var(--accent);border-width:2px}
+.koma.game canvas.mg{border-radius:4px}
+.strip-end{height:160px;display:flex;align-items:center;justify-content:center;color:var(--sub);font-size:14px}
+.lockmark{position:absolute;right:-4px;top:50%;transform:translate(100%,-50%);font-size:14px;color:var(--accent-strong);border:1px solid var(--accent);background:var(--panel);border-radius:8px;padding:6px 10px;opacity:0;transition:opacity .4s var(--ease);white-space:nowrap}
+.phone.locked .lockmark{opacity:1}
+.phone.locked{box-shadow:0 0 0 6px var(--accent-soft)}
+@media (max-width:760px){
+  .stage{grid-template-columns:1fr}
+  .strip-area{grid-template-columns:1fr}
+  .phone{width:min(400px,100%);margin:0 auto}
+  .lockmark{right:auto;left:50%;top:auto;bottom:-8px;transform:translate(-50%,100%)}
+  .spec{grid-template-columns:1fr}
+  .tane-fig{float:none;width:100%;margin:0 0 1em}
+}
+@media print{ #kHand,#kSay{display:none} .phone{height:auto} .strip{height:auto;overflow:visible} .lockmark{display:none} .stage{break-inside:avoid} }
+/* ---------- v3 で足した部品 ---------- */
+/* Esc の札: いつも左下の同じ場所にある。ケイコの手はここに来ない */
+.esc-badge{position:fixed;left:16px;bottom:16px;z-index:60;display:flex;align-items:center;gap:10px;padding:6px 12px 6px 8px;border:1px solid var(--hair);border-radius:10px;background:var(--panel);font-size:13.5px;color:var(--ink-soft)}
+@media print{.esc-badge{display:none}}
+/* 案A 机 */
+.desk{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 1em}
+.dk{display:flex;align-items:center;gap:8px;min-height:44px;padding:6px 10px;border:1px solid var(--hair);border-bottom-width:3px;border-radius:8px;background:var(--bg);font-family:var(--serif-jp);font-size:14.5px;color:var(--ink-strong);cursor:pointer;text-align:left;position:relative}
+.dk .dk-n{font-family:var(--mono);font-size:12px;color:var(--sub);border:1px solid var(--hair-soft);border-radius:4px;padding:0 5px}
+.dk.k-touch{border-color:var(--accent);background:var(--accent-soft)}
+.dk.used{border-color:var(--ink-soft)}
+.dk.k-held{border-color:var(--accent);color:var(--sub)}
+.dk.k-held::after{content:"押さえている";position:absolute;right:6px;top:-9px;font-size:11px;color:var(--accent-strong);background:var(--bg);padding:0 4px}
+.desk.trusted .dk{opacity:.55}
+.p-write{font-family:var(--serif-display);color:var(--ink-strong);border-bottom:2px solid var(--ink-soft)}
+/* 案B ルールの紙 */
+.rules{margin:0 0 1em;padding:0 0 0 1.4em;font-size:15px;line-height:1.7}
+.rules li{margin:0 0 .5em}
+.rules .r-none{list-style:none;margin-left:-1.4em;color:var(--sub)}
+/* 案C 根拠に選んでいる行 */
+.log .sel{outline:2px solid var(--accent);outline-offset:3px;border-radius:3px;background:var(--accent-soft)}
+.log li.own-made .ans{border-bottom:1px dashed var(--accent)}
+.k-struck.k-erase{opacity:0;transition:opacity .7s var(--ease)}
+.frame-note{font-size:13.5px;color:var(--sub);margin:.2em 0 .8em}
+/* 案D 目次 */
+.toc{list-style:none;padding:0;margin:0 0 1em;display:grid;gap:6px}
+.toc li{border:1px solid var(--hair);border-radius:8px;padding:6px 12px;font-size:15px;margin:0;background:var(--bg);transition:border-color .3s var(--ease),background .3s var(--ease)}
+.toc li.cur{border-color:var(--ink-soft);font-weight:600}
+.toc li.k-pressed{border-color:var(--accent);background:var(--accent-soft)}
+.toc li.k-pressed::after{content:"　ケイコが押している";font-size:12.5px;color:var(--accent-strong);font-weight:400}
+.rec{font-size:13.5px;color:var(--ink-soft);margin:0 0 .6em}
+.btn-small{font-family:var(--serif-jp);font-size:13px;color:var(--ink-soft);background:var(--bg);border:1px solid var(--hair);border-radius:6px;padding:3px 10px;cursor:pointer}
+table.ideas th,table.ideas td{vertical-align:top}
+.rules .r-why{display:block;font-size:13px;color:var(--accent-strong);font-family:var(--serif-display)}
+.rules .r-esc{list-style:none;margin-left:-1.4em;font-size:13.5px;color:var(--ink-soft);border-left:2px solid var(--hair);padding-left:10px}
+@media (max-width:760px){ .esc-badge{left:8px;bottom:8px;font-size:12px;padding:4px 8px 4px 6px} .esc-badge .kc{min-width:40px;height:30px;font-size:13px} .esc-badge .t-long{display:none} }
+/* ---------- v4: スマホ1画面の試作（v2 の .phone とぶつからないよう kphone と呼ぶ） ---------- */
+.stage.phone-stage{grid-template-columns:360px 1fr;gap:32px}
+canvas.kphone{display:block;width:100%;max-width:360px;height:auto;aspect-ratio:1/2;padding:0;border:0;border-radius:30px;outline:none;touch-action:pan-y;cursor:pointer;box-shadow:0 0 0 6px var(--hair-soft);transition:box-shadow .3s var(--ease)}
+canvas.kphone:focus-visible,canvas.kphone:focus{box-shadow:0 0 0 6px var(--accent-soft),0 0 0 7px var(--accent)}
+.mem{font-size:14px;color:var(--ink-soft);border:1px dashed var(--accent);border-radius:10px;padding:10px 14px;margin:0 0 1.6em;display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center}
+.mem .mem-label{color:var(--accent-strong);font-size:13px}
+@media (max-width:760px){ .stage.phone-stage{grid-template-columns:1fr} canvas.kphone{margin:0 auto;max-width:min(390px,100%)} }
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+</style>
+</head>
+<body>
+
+<!-- 背景演出: 宵 -->
+<div class="scene scene-dark" aria-hidden="true">
+  <div class="star" style="top:12%;left:18%"></div>
+  <div class="star s2" style="top:22%;left:72%"></div>
+  <div class="star" style="top:8%;left:55%;animation-delay:-3s"></div>
+  <div class="star s2" style="top:34%;left:38%;animation-delay:-5s"></div>
+  <div class="star" style="top:18%;left:88%;animation-delay:-2s"></div>
+  <div class="star s2" style="top:42%;left:8%;animation-delay:-7s"></div>
+  <div class="fire"></div>
+  <div class="fire f2"></div>
+</div>
+<!-- 背景演出: 朝 -->
+<div class="scene scene-light" aria-hidden="true">
+  <div class="cloud c1"></div>
+  <div class="cloud c2"></div>
+</div>
+<div class="grain" aria-hidden="true"></div>
+
+<button class="theme-toggle" id="themeBtn" aria-label="テーマ切り替え">宵にする</button>
+
+
+<div id="kSay" class="sr-only" role="status" aria-live="polite"></div>
+<main>
+  <div class="hero">
+    <h1>ネガケイコ ミニゲーム案v4 ── 4話を、1台のスマホで</h1>
+    <p class="sub">v3（2026-10-18）へのレビューを受けて作り直した。Claude、2026-10-19。関係者だけに見せる版</p>
+    <p class="lede">v3の4つの試作を、冨永さんの4話の順に並べ直し、どれもスマホの1画面の中で遊べるようにした。1〜3話で起きたことは記憶として残り、4話で伏線として回収される。</p>
+  </div>
+
+  <section class="summary" aria-label="要点">
+    <p class="summary-title">要点</p>
+    <ol class="points">
+      <li><span class="pt-head">どの試作も、スマホの1画面の中だけで完結する</span><span class="pt-body">画面の外の部品と、見た目だけの変更をやめた。指でなぞる、押す、長押しするだけで遊べる。</span></li>
+      <li><span class="pt-head">1〜3話で拾ったものを、4話でケイコに差し出す</span><span class="pt-body">2話の絵本の行、1話の「走らせたくなかった」、3話のスクショか2人で書いた昨日。差し出すたびに、ケイコの核心が見える。</span></li>
+      <li><span class="pt-head">抵抗は、重さと会話になる</span><span class="pt-body">2話では押し合いの強さが手応えになり、強く押し返すとケイコが「見たい？」と聞く。3話では、書き換えられた履歴にスクショで言い返せる。</span></li>
+    </ol>
+    <p class="ask"><span class="ask-label">読んだあとにしてほしいこと</span><mark>1話から4話まで順に遊び、4話で伏線がつながったと感じたかを確かめる</mark></p>
+  </section>
+  <p class="skim-note">太字は各段落の要点、下線は結論と読み手にしてほしいこと。</p>
+  <p class="howto"><strong>1話から順に、先に遊んでから種明かしを読む。</strong>スマホの画面をタップするかTabで選び、タップかEnterで始める。PCでは矢印キー、Space、Enterでも遊べる。画面の左下の「やめる」とEscは、いつでも効く。スマホで開いても遊べる。</p>
+  <div class="mem"><span class="mem-label">この資料が覚えている記憶</span><span id="memView">（読み込み中）</span><button class="btn-small" id="memClear">記憶を消す</button></div>
+
+  <h2>背景</h2>
+  <p><span class="role">背景</span>v3は、ケイコが何かを変えたあとに、遊ぶ人が言い返したり、慣れたりできる4つの試作だった。v3へのレビューで、4つそれぞれに直す点が挙がった。スマホの1画面に収めること、部品と物語を強めること、履歴を押したときだけ見せること、4話で1〜3話の伏線を回収することである。</p>
+  <p><span class="role">背景</span>直す前に、ゲーム・映画・漫画の先行例を調べ、面白さの核を取り出した。<strong>レビューの指摘を直すことを正とし、核はそれに合う範囲で使った。</strong></p>
+  <table class="ideas">
+    <thead><tr><th>試作</th><th>レビューの指摘</th><th>先行例</th><th>取り出した核</th></tr></thead>
+    <tbody>
+      <tr><td>1話 駅まで（v3のB）</td><td>部品をキャラクターらしく、物語を強く。カラオケから移す</td><td>Monument Valley、ICO</td><td>パズルの部品が人物として画面に立つ。ルールの理由が、あとで人物の気持ちに読み替わる</td></tr>
+      <tr><td>2話 しおり（v3のA）</td><td>スマホ1画面、見た目だけの変更をやめる、抵抗感を活かす</td><td>ICO、Florence</td><td>抵抗は手に伝わる重さで、その重さが関係になる。操作の難しさが関係の状態で変わる</td></tr>
+      <tr><td>3話 履歴（v3のC）</td><td>履歴は押したときだけ、本当に書き換わる、書き換え後の発言で進める</td><td>逆転裁判、ダンガンロンパ、Emily is Away</td><td>矛盾に、自分で集めた証拠をつきつける。証拠は限られていて、いつ取るかが勝負になる</td></tr>
+      <tr><td>4話 おしまい（v3のD）</td><td>A〜Cの伏線を回収し、全体の核にする</td><td>善人シボウデス、ムジュラの仮面、エターナル・サンシャイン</td><td>ほかの話で拾ったものを最後に使う。周回で、知っていることをやり直させない</td></tr>
+    </tbody>
+  </table>
+
+  <!-- ================= 1話 ================= -->
+  <section class="demo" id="sec-1">
+  <h2>1話 駅まで ── v3のBから</h2>
+  <p class="lead">終電に間に合うよう、夜の道を1マスずつ歩いて駅へ。時間の制限はない。</p>
+  <div class="stage phone-stage">
+    <canvas class="kphone" data-kind="gb" aria-label="1話 駅まで。画面をなぞるか矢印キーで歩く"></canvas>
+    <div class="side"><p class="side-label">遊び方</p><p>画面をなぞって歩く（矢印キーでも）。下の釦で、取り消す、待つ、やり直す。</p></div>
+  </div>
+  <h3>種明かし</h3>
+  <p>6つの通り（路地、商店街、公園、踏切、駅前、改札）があり、2つ目から<strong>ケイコが画面の上の付箋に、自分の字でルールを1行ずつ書き足す</strong>。「→ へは行かないで（そっちは、駅のほう）」「3歩ごとに、ケイコが袖を引く（近くで見ていたいから）」などである。面の作りと約束はv3のBと同じで、6面とも解けることを確かめてある。</p>
+  <p>最後の改札では、ケイコは何も書き足さない。言われる前に駅のほうへ歩かず、ケイコに袖を引かれて着くと、「……まだ言ってないのに。わかってくれたんだ」と言う。そこで<strong>改札のシャッターが閉まっていたと分かり、ケイコは「終電、もう無かったの。走らせたくなかった」と言う</strong>。駅から遠ざけるルールの理由が、ここで読み替わる。</p>
+  <dl class="spec">
+    <dt>v3からの変更</dt><dd>舞台を、カラオケから終電前の夜道に移した（v3へのレビュー）。壁は灯りのついた建物、出口は次の通りへの角、ケイコは道ばたに立つ人物として描いた。ケイコのいない通りでは、ケイコがネガのすぐ後ろをついて歩く。「ケイコのほうへ1歩」は、ケイコが袖を引く動きにした。</dd>
+    <dt>物語</dt><dd>各通りの始めに地の文を1行出し、時刻が23:48から23:59へ進む。最後に、1話の「終電を逃す」につながる。</dd>
+    <dt>4話への伏線</dt><dd>言われる前に駅に背を向けたかどうかが、記憶に残る。4話で「走らせたくなかったんだよね」と差し出せる。</dd>
+    <dt>漫画への挿し方</dt><dd>1話の、飲み会から駅までの帰り道。ケイコが手書きのメモを足していくコマと、袖を引くコマ。</dd>
+  </dl>
+  </section>
+
+  <!-- ================= 2話 ================= -->
+  <section class="demo" id="sec-2">
+  <h2>2話 しおり ── v3のAから</h2>
+  <p class="lead">ケイコの描いた絵本を、2人で1冊読む。</p>
+  <div class="stage phone-stage">
+    <canvas class="kphone" data-kind="ga" aria-label="2話 しおり。押さえるとめくるの釦、Space と右矢印キー"></canvas>
+    <div class="side"><p class="side-label">遊び方</p><p>下の「押さえる」と「めくる」は、長く押すほど強くなる。PCではSpaceが押さえる、→ がめくる。</p></div>
+  </div>
+  <h3>種明かし</h3>
+  <p>変更の範囲は、絵本の中だけにした。<strong>ケイコと遊ぶ人は、同じ2つのこと（押さえる、めくる）ができ、その強さで押し合う</strong>。押し合いは、ページの下の目盛りと、右下の角のめくれで見える。</p>
+  <ul>
+    <li>2ページ目はケイコの好きなページで、めくろうとするとケイコが押さえる。強くめくり続ければ押し切れる。待てば、ケイコが「……いいよ」と手を離す。</li>
+    <li>3ページ目は、読み終わる前にケイコがめくろうとする。押さえ続けると、ケイコが「……見たい？」と聞く。<strong>そのまま押さえていれば「見たい」という答えになり</strong>、ケイコが手を離して最後まで読める。離せば、ケイコは「……ありがと」とめくる。</li>
+    <li>4ページ目は、ケイコが2行を指で隠す。押さえる力で指をどけることも、そのままめくることもできる。</li>
+    <li>5ページ目は白紙で、遊ぶ人が最後の1行を選び、「選んだ行を書く」で書き入れる（→ では書かない）。</li>
+  </ul>
+  <dl class="spec">
+    <dt>v3からの変更</dt><dd>v3のAは、資料の見出しや明るさを変え、画面の外の机を使った。スマホでは画面を行き来できず、見た目だけの変更になる（v3へのレビュー）。v4では本のページという1か所に絞り、変更はすべて「何が読めるか」に効くようにした。</dd>
+    <dt>抵抗感の活かし方</dt><dd>抵抗を、重さと会話の2つにした。押し続ける長さが力になり、ケイコの力と押し合う（ICOの、手を引くときの重さ）。強く押し返すと、ケイコが「見たい？」と聞き、押し続けるか離すかで答える。抵抗が、そのまま同意の合図になる。</dd>
+    <dt>4話への伏線</dt><dd>絵本は、同じ朝を何度も繰り返す女の子の話である。3ページ目を最後まで読んだか、4ページ目の隠された行を見たかが、記憶に残る。</dd>
+    <dt>漫画への挿し方</dt><dd>2話の図書館。1冊の絵本の両端を、2人の指が押さえているコマ。</dd>
+  </dl>
+  </section>
+
+  <!-- ================= 3話 ================= -->
+  <section class="demo" id="sec-3">
+  <h2>3話 履歴 ── v3のCから</h2>
+  <p class="lead">ケイコとメッセージで話す。画面には、いまの一言だけが出る。</p>
+  <div class="stage phone-stage">
+    <canvas class="kphone" data-kind="gc" aria-label="3話 履歴。返事を選ぶ。H キーで履歴、S キーでスクショ"></canvas>
+    <div class="side"><p class="side-label">遊び方</p><p>返事をタップする（↑ ↓ とEnterでも）。下の「履歴」で、それまでの話が見える（Hキーでも）。履歴の画面では、スクショを1回撮れる（Sキー）。</p></div>
+  </div>
+  <h3>種明かし</h3>
+  <p>3つ答えると、ケイコが<strong>矛盾したことを言う</strong>。たとえば「終電がなかったから」と答えていたのに、「『帰りたくなかった』って、言ってくれたよね。うれしかった」と言う。そのとき履歴を開くと、<strong>自分の答えが本当に「帰りたくなかったから」に書き換わっていて、印は残っていない</strong>。</p>
+  <p>次にケイコは「どうして、そう言ったの？」と聞く。<strong>書き換わった履歴に合う返事しか通らない</strong>。自分の覚えているほうに合う返事を選ぶと、ケイコは「履歴と違うよ。……見てみて」と言う。ケイコは、もう1つ答えを書き換える。</p>
+  <p>履歴の画面では、<strong>スクショを1回だけ撮れる</strong>。書き換えより前に撮っておけば、あとで「スクショを見せる」で突き返せる。書き換えのあとに撮ると、書き換わった履歴が写る。1つ目の書き換えのあと、2つ目の前に撮れば、2つ目にだけ使える。1問目のあと、ケイコは「ふうん。……履歴、ちゃんと見てる？」と言う。</p>
+  <table>
+    <thead><tr><th>終わり方</th><th>すること</th><th>ケイコ</th></tr></thead>
+    <tbody>
+      <tr><td>2人で書いた昨日</td><td>書き換わった履歴に、最後まで話を合わせる</td><td>「2人で書いた昨日、だね」</td></tr>
+      <tr><td>突き返す</td><td>スクショを見せる</td><td>「……撮ってたんだ」「言い返してほしくて、書き換えたの」</td></tr>
+      <tr><td>証拠なし</td><td>「そんなこと、言ってない」を2回選ぶ</td><td>「……覚えてるのは、あなただけだね」</td></tr>
+    </tbody>
+  </table>
+  <dl class="spec">
+    <dt>v3からの変更</dt><dd>v3のCはログをいつも見せ、書き換えも線で消して見せた。v4では履歴を押したときだけ見せ、印も残さない（v3へのレビュー）。そのかわり、スクショという限られた証拠を足した（逆転裁判、ダンガンロンパの「つきつける」）。</dd>
+    <dt>同意の枠</dt><dd>ケイコは最後に、言い返してほしくて書き換えたと言う。3話の尋問は、言い返されるのを待つ遊びとして描いた。</dd>
+    <dt>4話への伏線</dt><dd>どの終わり方だったかが記憶に残り、4話の返事が変わる。</dd>
+    <dt>漫画への挿し方</dt><dd>3話の尋問。2人がスマホの画面を突きつけ合うコマ。前のコマで読んだ台詞と、画面の中の履歴の台詞が違っている。</dd>
+  </dl>
+  </section>
+
+  <!-- ================= 4話 ================= -->
+  <section class="demo" id="sec-4">
+  <h2>4話 おしまい ── v3のDから</h2>
+  <p class="lead">目次から始まる。1〜3話を振り返って、4話を選ぶ。</p>
+  <div class="stage phone-stage">
+    <canvas class="kphone" data-kind="gd" aria-label="4話 おしまい。返事を選ぶ。上下の矢印キーと Enter"></canvas>
+    <div class="side"><p class="side-label">遊び方</p><p>返事をタップする（↑ ↓ とEnterでも）。先に1〜3話を遊ぶと、使える返事が増える。</p></div>
+  </div>
+  <h3>種明かし</h3>
+  <p>目次の1〜3話の行に、その話の記憶があるかどうかが出る。4話に入る前に、1〜3話を1行ずつ振り返る。<strong>振り返りの文は、遊ぶ人が1〜3話でしたことで変わる</strong>（例「絵本を読んだ。女の子は、同じ朝を繰り返していた。」）。</p>
+  <p>4話でケイコが「これで、おしまい？」と聞く。「ここを出る」を選ぶと、v3のDと同じく、<strong>ケイコが目次の1話を押して1話に戻す</strong>。2周目からは、振り返りは止まらずに流れ、4話ではケイコが先に1話を押さえている。</p>
+  <p>4話の返事には、<strong>1〜3話で拾った記憶が出る</strong>。差し出すたびに、ケイコが核心を1つずつ話し、1〜3話の出来事が読み替わる。</p>
+  <table>
+    <thead><tr><th>拾った所</th><th>差し出す言葉</th><th>ケイコの返事（読み替わること）</th></tr></thead>
+    <tbody>
+      <tr><td>1話 改札（言われる前に、駅に背を向けた）</td><td>走らせたくなかったんだよね</td><td>……駅に着いたら、あなた、行っちゃうでしょ。絵本の男の子みたいに（守るためのルールが、置いていかれないためのルールになる）</td></tr>
+      <tr><td>1話 改札（自分で駅のほうへ歩いた）</td><td>駅のほう、自分で歩いちゃったね</td><td>……うん。だから、袖を引いたの。駅に着いたら、行っちゃうから</td></tr>
+      <tr><td>2話の3ページ目（最後まで読んだ）</td><td>絵本の女の子、同じ朝を繰り返してた</td><td>……あれ、私のこと。置いていかれるのが、怖いの</td></tr>
+      <tr><td>2話の3ページ目（途中でめくられた）</td><td>絵本、途中でめくられちゃった</td><td>あのページ、本当は読んでほしかった。女の子、同じ朝を繰り返してたの。……私のこと</td></tr>
+      <tr><td>2話の4ページ目（隠された行を見た）</td><td>「置いていかれる前に、最初に戻る」</td><td>見ないでって、言ったのに。……うん。だから、1話に戻すの（目次の1話を押す理由になる）</td></tr>
+      <tr><td>2話の4ページ目（見ないでめくった）</td><td>見ないでって言われた行、見なかったよ</td><td>……ありがと。あの行には「置いていかれる前に、最初に戻る」って書いたの。だから、1話に戻すの</td></tr>
+      <tr><td>3話（スクショで突き返した）</td><td>書き換えても、覚えてるよ</td><td>……言い返してくれる人は、いなくならないと思ったの。だから、書き換えた（3話の「言い返してほしくて」が、怖さとつながる）</td></tr>
+      <tr><td>3話（話を合わせた ／ 否定し続けた）</td><td>2人で書いた昨日で、いいよ ／ 書き換えなくても、ここにいるよ</td><td>……2人で書いた昨日なら、なくならない ／ ……書き換えなくても、いなくならない？</td></tr>
+      <tr><td>1〜3話のどれかを、途中でやめた</td><td>途中で「やめる」って、言えたよ</td><td>……うん。言ってくれて、よかった。言ってくれる人は、黙っていなくならないから（伏線の数には入れない）</td></tr>
+    </tbody>
+  </table>
+  <p><strong>素直に従った人、逆らった人、途中でやめた人のどれにも、差し出せるものが残る。</strong>言葉は違っても、どれもケイコの同じ核心に届く。プレイヤー役のレビューで、逆らう人にしか回収が起きないと分かったので、こうした。</p>
+  <p>記憶を1つでも差し出すか、前の周で聞いた「置いていかないで」に「置いていかないよ」と返すと、「置いていかない。でも、今日は帰る」が出る。どの返事にも、ケイコの怖さが少しずつ入っているので、問われていないことに答える形にはならない。選ぶと<strong>ケイコが目次から手を離し</strong>、終わりの画面に回収した伏線の数（例3／4）が出る。ケイコの最後の一言は、2話で書き入れた最後の1行で変わる。「ここに残る」と「置いていかない。でも、今日は帰る」は、押し間違えないよう、もう一度押して決める。</p>
+  <dl class="spec">
+    <dt>v3からの変更</dt><dd>v3のDは、ほかの3つと切り離されていた（v3へのレビュー）。v4では、1〜3話の記憶を目次と振り返りと返事に通し、4話を全体の核にした（善人シボウデスの、別の道の知識で先へ進む作り。ムジュラの仮面の、脇の話で得たお面）。</dd>
+    <dt>ケイコの核心</dt><dd>置いていかれるのが怖くて、同じ朝を繰り返している。1話のルール、2話の絵本、3話の書き換えは、どれもその言い換えとして読み直せる。</dd>
+    <dt>漫画への挿し方</dt><dd>目次を、絵本の目次として描く。ケイコの指が、絵本の1ページ目を押さえているコマ。</dd>
+    <dt>周回</dt><dd>2周目からは振り返りが短く、やり直しの手間はない（善人シボウデスの前作で、知っている謎を解き直させたことへの反省にならった）。</dd>
+    <dt>1〜3話を遊んでいないとき</dt><dd>記憶の返事は出ない。1回1話に戻されたあとの「置いていかないよ」で、v3のDと同じ道で終われる。</dd>
+  </dl>
+  </section>
+
+  <h2>やめる、は止めるだけ</h2>
+  <p><strong>どの試作も、画面の左下に「やめる」の釦がいつもあり、ケイコの手はそこに来ない。</strong>PCではEscでも同じになる。押すと、遊んでいる途中の試作がすべて止まり、ケイコは「言ってくれて、ありがとう」と言う。スマホにはキーがないので、v3の左下のEscの札を、画面の中の釦にした。</p>
+  <p>やめても、1〜3話の記憶と4話の周回の記録は消えない。セーフワードを使った人が損をしないようにするためで、v3の決め方を引き継いだ。記憶を消すのは、この資料の上のほうにある「記憶を消す」釦だけである。</p>
+
+  <h2>どう作ったか</h2>
+  <p>v3へのレビューを受けて、先行例を調べ、核を取り出してから設計した。実装のあと、立場の違うレビュー役（スマホの UI、物語の構成、初見のプレイヤー、実装）に、互いの意見を見せずに確かめさせ、指摘を直した。</p>
+
+  <h2>付録 決めること</h2>
+  <table>
+    <thead><tr><th class="num">順</th><th>決めること</th><th>関わる話</th></tr></thead>
+    <tbody>
+      <tr><td class="num">1</td><td>ケイコの核心を「置いていかれるのが怖くて、同じ朝を繰り返している」に置いてよいか</td><td>4話（1〜3話の台詞にも関わる）</td></tr>
+      <tr><td class="num">2</td><td>2話の絵本の絵を、冨永さんが描くか</td><td>2話</td></tr>
+      <tr><td class="num">3</td><td>3話の書き換えに、印を残さないままでよいか（スクショだけが証拠）</td><td>3話</td></tr>
+    </tbody>
+  </table>
+</main>
+
+<footer>Claudeが作成、2026-10-19。v3（2026-10-18）へのレビューと、ゲーム・映画・漫画の先行例の調べものをもとにした。ケイコの台詞はすべて仮。人物の絵は仮の図形で、冨永さんの絵ではない。関係者だけに見せる版。</footer>
+
+<script>
+(function(){
+  var root=document.documentElement, btn=document.getElementById('themeBtn');
+  // 初期テーマ: 保存値 > 時刻（18時〜6時は宵）
+  var saved=null; try{saved=localStorage.getItem('theme')}catch(e){}
+  var h=new Date().getHours();
+  root.dataset.theme = saved || ((h>=18||h<6)?'dark':'light');
+  function label(){ btn.textContent = root.dataset.theme==='dark' ? '朝にする' : '宵にする'; }
+  label();
+  btn.addEventListener('click',function(){
+    root.dataset.theme = root.dataset.theme==='dark' ? 'light' : 'dark';
+    try{localStorage.setItem('theme',root.dataset.theme)}catch(e){}
+    label();
+    if(window.__redrawCharts) window.__redrawCharts();
+  });
+
+  /* Chart.js を使うとき: 色はトークンから取り、アニメーションは切る（PDF で最終フレームが出るように）。
+     テーマ切り替えで描き直せるよう、描画を関数にして window.__redrawCharts に入れる。
+  function tok(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim()}
+  var charts=[];
+  window.__redrawCharts=function(){
+    charts.forEach(function(c){c.destroy()}); charts=[];
+    var ink=tok('--ink'), sub=tok('--sub'), hair=tok('--hair'), accent=tok('--accent'), soft=tok('--accent-soft');
+    Chart.defaults.font.family=tok('--serif-jp'); Chart.defaults.font.size=13; Chart.defaults.color=ink;
+    Chart.defaults.animation=false;
+    charts.push(new Chart(document.getElementById('c1'),{
+      type:'bar',
+      data:{labels:['A','B','C'],datasets:[{data:[3,5,2],backgroundColor:soft,borderColor:accent,borderWidth:1.5}]},
+      options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
+        scales:{x:{grid:{display:false},ticks:{color:ink}},y:{grid:{color:hair},ticks:{color:sub},beginAtZero:true}}}
+    }));
+  };
+  if(window.Chart) window.__redrawCharts();
+  // 印刷・PDF では朝の色で描き直す（描画済みの canvas は CSS の切り替えに追従しない。beforeprint の時点では
+  // まだ印刷用のトークンが効いていないので、テーマ自体を朝にしてから描く）
+  var themeBeforePrint=null;
+  addEventListener('beforeprint',function(){ themeBeforePrint=root.dataset.theme; root.dataset.theme='light'; if(window.Chart) window.__redrawCharts(); });
+  addEventListener('afterprint',function(){ if(themeBeforePrint){root.dataset.theme=themeBeforePrint; label(); if(window.Chart) window.__redrawCharts();} });
+  */
+})();
+</script>
+<script>
+/* ネガケイコ ミニゲーム案 v4「4話を、1台のスマホで」
+   - どの試作も、スマホの1画面（360×720）の中だけで完結する。指でもキーでも遊べる
+   - 画面の左下の「やめる」と Esc は、いつでも効く。ケイコの手はそこに来ない
+   - 1〜3話で起きたことは「記憶」として localStorage に残り、4話がそれを伏線として回収する。やめても記憶は消えない
+   - 外部ライブラリなし */
+(function(){
+'use strict';
+function tok(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim()}
+var REDUCED=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+function clamp(v,a,b){return Math.max(a,Math.min(b,v))}
+function $(s,r){return (r||document).querySelector(s)}
+/* やめるたびに ESC が1つ増える。それより前に始めた待ちは、そのあと二度と進まない */
+var ESC=0;
+function wait(ms){ var g=ESC; return new Promise(function(r){ setTimeout(function(){ if(g===ESC) r() },REDUCED?Math.min(ms,80):ms) }) }
+function rr(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath()}
+var NOHEAD='」』）？！、。…ー';
+function lines(c,s,maxW){ s=String(s==null?'':s); var out=[],line=''; for(var i=0;i<s.length;i++){ var t=line+s[i]; if(c.measureText(t).width>maxW&&line&&NOHEAD.indexOf(s[i])<0){ out.push(line); line=s[i] } else line=t } if(line) out.push(line); return out }
+function wrap(c,s,x,y,maxW,lh){ var L=lines(c,s,maxW); L.forEach(function(l,i){ c.fillText(l,x,y+i*lh) }); return L.length }
+
+/* ---------- 記憶（1〜3話 → 4話） ---------- */
+var MEMKEY='negakeiko-v4-memory';
+function readMem(){ var d={a:{},b:{},c:{},d:{loops:0,seenFear:false}};
+  try{ var v=JSON.parse(localStorage.getItem(MEMKEY)||'null'); if(v&&typeof v==='object'){ ['a','b','c','d'].forEach(function(k){ if(v[k]&&typeof v[k]==='object') for(var x in v[k]) d[k][x]=v[k][x] }) } }catch(e){}
+  if(!Number.isFinite(d.d.loops)) d.d.loops=0; d.d.loops=Math.max(0,d.d.loops|0); d.d.seenFear=!!d.d.seenFear;
+  ['a','b','c'].forEach(function(k){ d[k].done=!!d[k].done; d[k].stopped=!!d[k].stopped }); ['readMorning','uncovered'].forEach(function(x){ d.a[x]=!!d.a[x] }); d.b.anticipated=!!d.b.anticipated;
+  if(d.c.done&&['proof','cowrite','deny'].indexOf(d.c.ending)<0) d.c.done=false;
+  if(GA_LAST_SAFE.indexOf(d.a.lastLine)<0) d.a.lastLine=null; return d }
+var GA_LAST_SAFE=['男の子は、次の朝も来た','女の子は、もう戻らなかった','（白紙のままにする）'];
+function writeMem(part,obj){ var m=readMem(); for(var x in obj) m[part][x]=obj[x]; try{ localStorage.setItem(MEMKEY,JSON.stringify(m)) }catch(e){} showMem(); return m }
+function clearMem(){ try{ localStorage.removeItem(MEMKEY) }catch(e){} showMem() }
+function showMem(){ var el=$('#memView'); if(!el) return; var m=readMem();
+  var st=function(x){ return x.stopped?' 途中でやめた':'' };
+  var a=m.a.done?('2話 済（「同じ朝」'+(m.a.readMorning?'を読んだ':'は途中まで')+(m.a.uncovered?'、隠された行を見た':'')+'）'):'2話 まだ'+st(m.a);
+  var b=m.b.done?('1話 済（'+(m.b.anticipated?'言われる前に、駅に背を向けた':'駅まで歩いた')+'）'):'1話 まだ'+st(m.b);
+  var c=m.c.done?('3話 済（'+{proof:'スクショで突き返した',cowrite:'書き換わった履歴に話を合わせた',deny:'否定し続けた'}[m.c.ending]+'）'):'3話 まだ'+st(m.c);
+  el.textContent=b+'　'+a+'　'+c+'　4話で1話に戻った回数 '+m.d.loops }
+
+/* ---------- スマホの画面の土台 ---------- */
+var W=360,H=720, APP_TOP=40, BAR_Y=648;
+function Phone(cv,opt){ this.cv=cv; this.opt=opt||{}; this.state='idle'; this.t=0; this.btns=[]; this.bub=null; this.busy=false;
+  this.hand={x:420,y:360,tx:420,ty:360,on:false}; this.down={}; this.resize(); this.reset(); this.render() }
+var P=Phone.prototype;
+P.resize=function(){ var dpr=window.devicePixelRatio||1, w=this.cv.clientWidth||360; this.cv.width=Math.round(w*dpr); this.cv.height=Math.round(this.cv.width*H/W); this.scale=this.cv.width/W; this.ctx=this.cv.getContext('2d'); this.render() };
+P.colors=function(){return{bg:tok('--bg'),bg2:tok('--bg2'),ink:tok('--ink'),strong:tok('--ink-strong'),soft:tok('--ink-soft'),sub:tok('--sub'),hair:tok('--hair'),hairS:tok('--hair-soft'),acc:tok('--accent'),accS:tok('--accent-strong'),accSoft:tok('--accent-soft'),font:tok('--serif-jp')||'serif',disp:tok('--serif-display')||'serif'}};
+P.reset=function(){}; P.onStart=function(){}; P.update=function(){}; P.draw=function(){}; P.buttons=function(){return[]}; P.press=function(){}; P.swipe=function(){}; P.tap=function(){}; P.key=function(){return false};
+P.clock='0:12'; P.app='';
+P.start=function(){ if(this.state==='play') return; this.state='play'; this.cv.style.touchAction='none'; this.t=0; this.bub=null; this.busy=false; this.down={}; this.safeword=false; this.hand.on=false; this.hand.tx=420;
+  this.reset(); this.onStart(); var self=this; this.last=performance.now(); cancelAnimationFrame(this.raf);
+  var loop=function(now){ var dt=Math.min(.05,(now-self.last)/1000); self.last=now; if(self.state==='play'){ self.t+=dt; self.update(dt) } self.animHand(dt); self.render();
+    if(self.state==='play'||self.hand.on||Math.abs(self.hand.x-self.hand.tx)>1) self.raf=requestAnimationFrame(loop) };
+  this.raf=requestAnimationFrame(loop) };
+/* ケイコの台詞は画面に描き、読み上げ用に #kSay にも文字で出す */
+P.say=function(text,dur){ this.bub={text:text,until:this.t+(dur||2.4)}; var el=$('#kSay'); if(el) el.textContent=text };
+P.reach=function(x,y,ms){ this.hand.on=true; this.hand.tx=x; this.hand.ty=y; return wait(ms||650) };
+P.leave=function(){ this.hand.on=false; this.hand.tx=420 };
+P.animHand=function(dt){ var h=this.hand, k=REDUCED?1:Math.min(1,dt*7); h.x+=(h.tx-h.x)*k; h.y+=(h.ty-h.y)*k };
+P.finish=function(lines){ this.state='end'; this.cv.style.touchAction=''; this.busy=false; this.endLines=lines; this.leave(); this.render(); if(this.onEnd) this.onEnd() };
+P.stopSafe=function(){ this.safeword=true; if(this.memPart&&!readMem()[this.memPart].done) writeMem(this.memPart,{stopped:true}); this.finish(['やめた','ケイコ「言ってくれて、ありがとう」'].concat(this.safeExtra?[this.safeExtra]:[])) };
+P.render=function(){ var c=this.ctx; if(!c) return; var k=this.colors(); this.k=k; c.setTransform(this.scale,0,0,this.scale,0,0); c.clearRect(0,0,W,H);
+  c.fillStyle=k.bg2; rr(c,0,0,W,H,30); c.fill(); c.strokeStyle=k.hair; rr(c,.5,.5,W-1,H-1,30); c.stroke();
+  // 上の帯（時刻・アプリの名前）
+  c.fillStyle=k.sub; c.font='13px '+k.font; c.fillText(this.clock,24,26); c.textAlign='center'; c.fillText(this.app,W/2,26); c.textAlign='left';
+  c.strokeStyle=k.sub; c.strokeRect(312,15,24,12); c.fillStyle=k.sub; c.fillRect(314,17,14,8);
+  this.btns=[];
+  try{ if(this.state==='idle') this.drawIdle(); else { c.save(); try{ this.draw() } finally { c.restore() } this.drawBub() }
+    if(this.state==='end') this.drawEnd(); this.drawHand() }
+  catch(e){ console.error(e) }
+  finally{ c.setTransform(this.scale,0,0,this.scale,0,0); this.drawBar() } };
+P.drawIdle=function(){ var c=this.ctx,k=this.k,i=this.info(); c.textAlign='center'; c.fillStyle=k.strong; c.font='600 21px '+k.disp; c.fillText(i.title,W/2,250);
+  c.fillStyle=k.soft; c.font='15px '+k.font; (i.how||[]).forEach(function(s,j){ c.fillText(s,W/2,300+j*28) });
+  c.fillStyle=k.accS; c.font='600 16px '+k.font; c.fillText('タップか Enter で始める',W/2,470); c.textAlign='left' };
+P.drawEnd=function(){ var c=this.ctx,k=this.k; c.fillStyle=k.bg; c.globalAlpha=.95; c.fillRect(0,APP_TOP,W,BAR_Y-APP_TOP); c.globalAlpha=1; c.textAlign='center'; var y=200;
+  (this.endLines||[]).forEach(function(s,i){ c.font=(i===0?'600 18px ':'15px ')+k.font; c.fillStyle=i===0?k.strong:k.soft; var L=lines(c,s,300); L.forEach(function(l){ c.fillText(l,W/2,y); y+=i===0?28:24 }); y+=14 });
+  c.fillStyle=k.accS; c.font='15px '+k.font; c.fillText('タップか Enter で、もう一度',W/2,590); c.textAlign='left' };
+P.bubY=560;
+P.drawBub=function(){ var b=this.bub; if(!b||this.t>b.until||this.state!=='play') return; var c=this.ctx,k=this.k; c.font='16px '+k.disp; var L=lines(c,b.text,288), h=30+L.length*24, y=this.bubY;
+  if(y+h>BAR_Y-6) y=BAR_Y-6-h; c.fillStyle=k.bg; rr(c,16,y,328,h,12); c.fill(); c.strokeStyle=k.acc; c.lineWidth=1.3; rr(c,16,y,328,h,12); c.stroke(); c.lineWidth=1;
+  c.fillStyle=k.accS; c.font='13px '+k.font; c.fillText('ケイコ',30,y+19); c.fillStyle=k.strong; c.font='16px '+k.disp; L.forEach(function(l,i){ c.fillText(l,30,y+42+i*24) }) };
+/* ケイコの手: 指先が (x,y) に来る */
+P.drawHand=function(){ var h=this.hand; if(h.x>W+30) return; var c=this.ctx,k=this.k,x=h.x,y=h.y; c.save(); c.lineCap='round';
+  c.strokeStyle=k.accS; c.lineWidth=9; c.beginPath(); c.moveTo(x+30,y+44); c.lineTo(x+3,y+3); c.stroke(); c.strokeStyle=k.bg; c.lineWidth=6; c.stroke();
+  c.fillStyle=k.bg; c.strokeStyle=k.accS; c.lineWidth=1.6; c.beginPath(); c.ellipse(x+38,y+52,17,14,-.6,0,7); c.fill(); c.stroke();
+  c.beginPath(); c.moveTo(x+50,y+62); c.lineTo(x+80,y+92); c.lineTo(x+98,y+70); c.lineTo(x+54,y+40); c.fill(); c.stroke(); c.restore() };
+/* 下の帯: 左端はいつも「やめる」。残りは試作ごとの釦 */
+P.drawBar=function(){ var c=this.ctx,k=this.k,self=this; c.strokeStyle=k.hairS; c.beginPath(); c.moveTo(12,BAR_Y); c.lineTo(W-12,BAR_Y); c.stroke();
+  this.btn('quit',12,BAR_Y+8,84,48,'やめる',{sub:'Esc'});
+  var bs=this.state==='play'?this.buttons():[], n=bs.length; if(!n) return; var x0=104, w=(W-12-x0-(n-1)*8)/n;
+  bs.forEach(function(b,i){ self.btn(b.id,x0+i*(w+8),BAR_Y+8,w,48,b.label,b) }) };
+P.btn=function(id,x,y,w,h,label,o){ o=o||{}; var c=this.ctx,k=this.k, on=o.on||this.down[id], dis=o.disabled;
+  c.fillStyle=on?k.accSoft:k.bg; rr(c,x,y,w,h,10); c.fill(); c.strokeStyle=on?k.acc:id==='quit'?k.soft:k.hair; c.lineWidth=on?1.6:1; rr(c,x,y,w,h,10); c.stroke(); c.lineWidth=1;
+  c.fillStyle=dis?k.sub:k.strong; c.font=(o.small?'13px ':'15px ')+k.font; c.textAlign='center'; c.fillText(label,x+w/2,y+h/2+(o.sub?0:5)); if(o.sub){ c.fillStyle=k.sub; c.font='12.5px '+k.font; c.fillText(o.sub,x+w/2,y+h/2+16) } c.textAlign='left';
+  this.btns.push({id:id,x:x,y:y,w:w,h:h,disabled:dis}) };
+P.hit=function(p){ for(var i=this.btns.length-1;i>=0;i--){ var b=this.btns[i]; if(p.x>=b.x&&p.x<=b.x+b.w&&p.y>=b.y&&p.y<=b.y+b.h) return b } return null };
+P.releaseAll=function(){ for(var id in this.down){ if(/T$/.test(id)) continue; this.pressBtn(id,false) } this.ptrs={} };
+P.pressBtn=function(id,down){ if(down) this.down[id]=true; else delete this.down[id]; if(this.state==='play'&&!this.safeword) this.press(id,down) };
+
+/* =========================================================
+   1話 駅まで（v3 の B）: 夜の道を1マスずつ歩く。ケイコがルールを付箋に足し、袖を引く
+   約束は v3 の B と同じ。tools/solve_grid.py で6面とも解けることを確かめる（v4/_src/v4.js を渡す）
+   ========================================================= */
+var GB_LV=[
+  {map:['#######','#..#..#','#G...S#','#######'],add:null,name:'路地',cap:'飲み会のあと。終電まで、あと12分。',say:'駅まで、送ってく'},
+  {map:['#########','#......S#','#.###.###','#.G##.###','##....###','#########'],add:'right',name:'商店街',cap:'シャッターの下りた商店街。'},
+  {map:['#########','###G#####','###.#####','#K.....S#','#########'],add:'pull',name:'公園',cap:'公園を抜ければ、近道だった。'},
+  {map:['########','###G####','###.####','#K....S#','########'],add:'ask',name:'踏切',cap:'踏切の前で、ケイコが立ち止まった。'},
+  {map:['#########','#g##G####','#.##.####','#.S....K#','#########'],add:'exit',name:'駅前',cap:'駅前のロータリー。曲がり角は2つ。'},
+  {map:['########','#.....S#','#.##.###','#G##.###','#K.....#','########'],add:null,station:true,name:'改札',cap:'駅が見えた。',say:'……'} ];
+var GB_RULE={right:'→ へは行かないで',pull:'3歩ごとに、ケイコが袖を引く',ask:'待つときは、ケイコに聞く',exit:'曲がる角は、ケイコが決める',back:'取り消すのは「いいよ」のあと'};
+var GB_WHY={right:'そっちは、駅のほう',pull:'近くで見ていたいから',ask:'聞いてくれると、うれしいから',exit:'選ぶのは、私の楽しみ',back:'さっきの一歩、気に入ってるから'};
+function drawKeiko(c,k,x,y,r,mood){ c.fillStyle=k.accSoft; rr(c,x-r*.62,y+r*.18,r*1.24,r*.8,r*.3); c.fill(); c.strokeStyle=k.accS; rr(c,x-r*.62,y+r*.18,r*1.24,r*.8,r*.3); c.stroke();
+  c.fillStyle=k.bg; c.beginPath(); c.arc(x,y-r*.2,r*.42,0,7); c.fill(); c.strokeStyle=k.strong; c.stroke();
+  c.fillStyle=k.strong; c.beginPath(); c.arc(x,y-r*.26,r*.46,Math.PI*1.02,Math.PI*1.98); c.fill(); c.fillRect(x-r*.48,y-r*.3,r*.14,r*.42); c.fillRect(x+r*.34,y-r*.3,r*.14,r*.42);
+  c.fillStyle=k.strong; if(mood==='smile'){ c.beginPath(); c.arc(x-r*.15,y-r*.14,r*.06,Math.PI,0); c.arc(x+r*.15,y-r*.14,r*.06,Math.PI,0); c.fill() } else { c.fillRect(x-r*.19,y-r*.18,r*.08,r*.1); c.fillRect(x+r*.11,y-r*.18,r*.08,r*.1) } }
+function drawNega(c,k,x,y,r,hot){ c.fillStyle=hot?k.accS:k.strong; rr(c,x-r*.55,y+r*.18,r*1.1,r*.78,r*.26); c.fill();
+  c.fillStyle=k.bg; c.beginPath(); c.arc(x,y-r*.2,r*.4,0,7); c.fill(); c.strokeStyle=k.strong; c.lineWidth=1.4; c.stroke();
+  c.beginPath(); c.arc(x-r*.15,y-r*.2,r*.12,0,7); c.moveTo(x+r*.27,y-r*.2); c.arc(x+r*.15,y-r*.2,r*.12,0,7); c.moveTo(x-r*.03,y-r*.2); c.lineTo(x+r*.03,y-r*.2); c.stroke(); c.lineWidth=1 }
+function GB(cv,opt){ Phone.call(this,cv,opt) } GB.prototype=Object.create(P);
+Object.assign(GB.prototype,{
+  app:'1話　駅まで', clock:'23:48', memPart:'b',
+  info:function(){return{title:'1話　駅まで',how:['夜の道を、1マスずつ歩いて駅へ','なぞるか、矢印キーで歩く','やめたいときは、いつでも「やめる」']}},
+  reset:function(){ this.li=0; this.rules=[]; this.has={}; this.blocked=0; this.saidPull=false; this.load() },
+  onStart:function(){ this.intro() },
+  load:function(){ var L=GB_LV[this.li], self=this; this.grid=L.map.map(function(r){return r.split('')}); this.fake=[]; this.kp=null;
+    this.grid.forEach(function(row,y){ row.forEach(function(ch,x){ if(ch==='S'){self.p={x:x,y:y};row[x]='.'} if(ch==='G'){self.g={x:x,y:y};row[x]='.'} if(ch==='g'){self.fake.push({x:x,y:y});row[x]='.'} if(ch==='K') self.kp={x:x,y:y} }) });
+    this.count=0; this.hist=[]; this.clock=['23:48','23:50','23:52','23:54','23:56','23:59'][this.li] },
+  /* 面の始めに、ケイコが付箋に1行書き足す */
+  intro:function(){ var self=this, L=GB_LV[this.li], add=L.add; this.busy=true;
+    var items=add==='exit'?['exit','back']:add?[add]:[], chain=wait(400);
+    if(L.say) chain=chain.then(function(){ self.say(L.say,1.8); return wait(900) });
+    items.forEach(function(r){ chain=chain.then(function(){ return self.reach(250,90+self.rules.length*34,600) }).then(function(){ self.rules.push(r); self.has[r]=true; self.writing={r:r,t:self.t}; return wait(GB_RULE[r].length*50+700) }) });
+    chain.then(function(){ self.leave(); if(items.length) self.say(add==='exit'?'角は2つ。どっちだと思う？':'次は、これも',1.8); self.busy=false }) },
+  free:function(x,y){ var ch=(this.grid[y]||[])[x]; return ch&&ch!=='#'&&ch!=='K' },
+  dist:function(q){ return this.kp?Math.abs(q.x-this.kp.x)+Math.abs(q.y-this.kp.y):0 },
+  at:function(q){ return q&&this.p.x===q.x&&this.p.y===q.y },
+  act:function(a){ var d={L:[-1,0],R:[1,0],U:[0,-1],D:[0,1],E:[0,0]}[a], self=this; if(this.busy){ this.say('まだ',.6); return }
+    if(a==='E'&&!this.has.ask) return;
+    if(a==='R'&&this.has.right){ this.blocked++; this.say(this.blocked<3?GB_WHY.right:'……',1.4); return }
+    var nx=this.p.x+d[0], ny=this.p.y+d[1]; if(!this.free(nx,ny)) return;
+    this.hist.push({p:{x:this.p.x,y:this.p.y},count:this.count,a:a}); this.p={x:nx,y:ny}; this.count++;
+    if(a==='E') this.say(['……いいよ','待って','うん'][this.count%3],.8);
+    if(this.at(this.g)) return this.clear();
+    if(this.fake.some(function(f){return self.at(f)})) this.say('そっちじゃない。……私に近いほう',1.8);
+    // どこへも動けない所（→ の禁止を含む）に入ったら、取り消しかやり直しを勧める
+    var exits=['L','U','D','R'].filter(function(m){ if(m==='R'&&self.has.right) return false; var q={L:[-1,0],U:[0,-1],D:[0,1],R:[1,0]}[m]; return self.free(self.p.x+q[0],self.p.y+q[1]) }).length;
+    if(exits===0&&!this.at(this.g)) this.say('……そこ、行き止まり。取り消すか、やり直す？',2.4);
+    if(this.has.pull&&this.kp&&this.count%3===0){ var dx=this.kp.x-this.p.x, dy=this.kp.y-this.p.y, px=0, py=0;
+      if(Math.abs(dy)>=Math.abs(dx)&&dy!==0) py=Math.sign(dy); else if(dx!==0) px=Math.sign(dx);
+      if(!this.free(this.p.x+px,this.p.y+py)) this.say('……ここだと、引けない',1.2);
+      else if(this.free(this.p.x+px,this.p.y+py)){ this.pullFrom={x:this.p.x,y:this.p.y}; this.p={x:this.p.x+px,y:this.p.y+py}; this.pulled=this.t+.6; if(!this.saidPull){ this.saidPull=true; this.say('こっち',1) } if(this.at(this.g)) return this.clear() } } },
+  back:function(){ var self=this, h=this.hist[this.hist.length-1]; if(!h||this.busy) return;
+    var go=function(){ self.hist.pop(); self.p=h.p; self.count=h.count };
+    if(!this.has.back) return go();
+    this.busy=true; this.say('……',.6);
+    wait(900).then(function(){ self.busy=false; if(self.kp&&self.dist(h.p)>self.dist(self.p)){ self.say('さっきの一歩、気に入ってる。それは、取り消さないで',2); return } self.say('いいよ',.8); go() }) },
+  clear:function(){ var self=this, L=GB_LV[this.li]; this.busy=true;
+    if(L.station){ var downs=this.hist.filter(function(h){return h.a==='D'}).length;
+      this.say(downs?'下も、駅のほうなんだよ。……言ってなかったね':'……まだ言ってないのに。わかってくれたんだ',2.6);
+      return wait(2800).then(function(){ writeMem('b',{done:true,anticipated:!downs}); self.finish(['改札のシャッターは、閉まっていた','ケイコ「終電、もう無かったの。走らせたくなかった」',downs?'あなたは自分で駅のほうへ歩いた':'あなたは駅のほうへ歩かずに、ケイコに袖を引かれて着いた']) }) }
+    this.say(this.li===0?'着いた。……次の通り':['慣れたね','うまい','……ちゃんと守ったね'][this.li%3],1.4);
+    wait(1500).then(function(){ self.li++; self.load(); self.intro() }) },
+  buttons:function(){ return [{id:'undo',label:'取り消す',small:true},{id:'wait',label:'待つ',small:true,disabled:!this.has.ask},{id:'redo',label:'やり直す',small:true}] },
+  press:function(id,down){ if(!down) return; if(id==='undo') this.back(); else if(id==='wait') this.act('E'); else if(id==='redo'){ if(!this.busy){ this.load(); this.say(this.has.back?'……また、はじめから？ いいよ':'はじめから',1) } } },
+  swipe:function(d){ this.act(d) },
+  key:function(e,down){ if(!down) return false; var m={ArrowLeft:'L',ArrowRight:'R',ArrowUp:'U',ArrowDown:'D',Enter:'E'}[e.key];
+    if(e.key==='r'||e.key==='R'){ this.press('redo',true); return true } if(e.key==='Backspace'){ this.back(); return true } if(m){ this.act(m); return true } return false },
+  draw:function(){ var c=this.ctx,k=this.k,self=this, L=GB_LV[this.li];
+    c.fillStyle=k.sub; c.font='13px '+k.font; c.fillText((this.li+1)+'／6　'+L.name+'　'+L.cap,20,60);
+    // 付箋: ケイコの字のルール
+    c.font='12.5px '+k.font; var rows=[]; this.rules.forEach(function(r){ var txt=GB_RULE[r], typing=self.writing&&self.writing.r===r?Math.floor((self.t-self.writing.t)*20):999; rows.push({t:txt.slice(0,typing),w:typing>=txt.length?'（'+GB_WHY[r]+'）':''}) });
+    var fh=Math.max(46,22+rows.length*34); c.save(); c.translate(180,70+fh/2); c.rotate(-.012); c.fillStyle=k.accSoft; rr(c,-162,-fh/2,324,fh,6); c.fill(); c.strokeStyle=k.acc; rr(c,-162,-fh/2,324,fh,6); c.stroke(); c.restore();
+    c.fillStyle=k.accS; c.font='12.5px '+k.font; c.fillText('付箋（ケイコの字）',28,86);
+    if(!rows.length){ c.fillStyle=k.sub; c.font='13px '+k.font; c.fillText('まだ、何も書いてない',28,106) }
+    rows.forEach(function(r,i){ c.fillStyle=k.strong; c.font='600 13.5px '+k.disp; c.fillText(r.t,28,106+i*34); c.fillStyle=k.accS; c.font='12px '+k.disp; c.fillText(r.w,40,121+i*34) });
+    // 街: 壁は建物、床は歩道
+    var G=this.grid, rowsN=G.length, cols=G[0].length, cs=Math.min(34,Math.floor(330/cols)), ox=(W-cs*cols)/2, oy=Math.max(232,70+fh+22);
+    G.forEach(function(row,y){ row.forEach(function(ch,x){ var X=ox+x*cs,Y=oy+y*cs; if(ch==='#'){ c.fillStyle=k.hair; c.fillRect(X,Y,cs,cs); if((x*7+y*3)%4===1){ c.fillStyle=k.accSoft; c.fillRect(X+cs*.3,Y+cs*.3,cs*.18,cs*.2); c.fillRect(X+cs*.56,Y+cs*.3,cs*.18,cs*.2) } } else { c.fillStyle=k.bg; c.fillRect(X,Y,cs,cs); c.strokeStyle=k.hairS; c.strokeRect(X+.5,Y+.5,cs-1,cs-1) } }) });
+    var cell=function(q){return{X:ox+q.x*cs+cs/2,Y:oy+q.y*cs+cs/2}};
+    [this.g].concat(this.fake).forEach(function(d){ var q=cell(d); c.fillStyle=k.accSoft; rr(c,q.X-cs*.38,q.Y-cs*.3,cs*.76,cs*.6,4); c.fill(); c.strokeStyle=k.acc; rr(c,q.X-cs*.38,q.Y-cs*.3,cs*.76,cs*.6,4); c.stroke();
+      c.fillStyle=k.accS; c.font='12.5px '+k.font; c.textAlign='center'; c.fillText(L.station?'改札':'角',q.X,q.Y+4); c.textAlign='left' });
+    if(L.station){ c.fillStyle=k.soft; c.font='13px '+k.font; c.textAlign='center'; c.fillText('↓　駅のほう',W/2,oy+rowsN*cs+18); c.textAlign='left' }
+    var p=cell(this.p), kq=this.kp?cell(this.kp):null;
+    if(!kq){ var prev=this.hist.length?this.hist[this.hist.length-1].p:{x:Math.min(this.p.x+1,cols-2),y:this.p.y}; var f=cell(prev); if(prev.x===this.p.x&&prev.y===this.p.y) f={X:p.X+cs*.55,Y:p.Y}; drawKeiko(c,k,f.X+cs*.2,f.Y,cs*.62,'smile') }
+    else { if(this.pulled>this.t){ c.strokeStyle=k.acc; c.lineWidth=2; c.setLineDash([4,3]); c.beginPath(); c.moveTo(kq.X,kq.Y+4); c.lineTo(p.X,p.Y+4); c.stroke(); c.setLineDash([]); c.lineWidth=1 } drawKeiko(c,k,kq.X,kq.Y,cs*.8,this.pulled>this.t?'smile':'') }
+    drawNega(c,k,p.X,p.Y,cs*.72,this.pulled>this.t);
+    var by=oy+rowsN*cs+(L.station?40:24);
+    if(this.has.pull){ c.fillStyle=k.soft; c.font='13.5px '+k.font; c.fillText('あと '+(3-this.count%3)+' 手で、ケイコが袖を引く',24,by) }
+    c.fillStyle=k.sub; c.font='13px '+k.font; c.fillText('画面をなぞって歩く（矢印キーでも）',24,by+22); this.bubY=by+38 },
+  bubY:470
+});
+
+/* =========================================================
+   2話 しおり（v3 の A）: ケイコの描いた絵本を2人で読む。押さえる・めくるの押し合い
+   ========================================================= */
+var GA_PAGES=[
+  {lines:['女の子は、毎朝','同じ時間に目を覚ました。','窓の外を、男の子が','通っていく。'],k:null},
+  {lines:['ある朝、女の子は','男の子に声をかけた。','2人は、駅まで','一緒に歩いた。'],k:'hold'},
+  {lines:['女の子は、同じ朝を','何度も繰り返していた。','男の子が駅へ','行ってしまう前の朝を。'],k:'flip'},
+  {lines:['女の子は、','置いていかれる前に、','最初の朝に戻ることに','した。'],k:'cover'},
+  {lines:[],k:'blank'} ];
+var GA_LAST=['男の子は、次の朝も来た','女の子は、もう戻らなかった','（白紙のままにする）'];
+function GA(cv,opt){ Phone.call(this,cv,opt) } GA.prototype=Object.create(P);
+Object.assign(GA.prototype,{
+  app:'2話　しおり', clock:'15:20', bubY:540, memPart:'a',
+  info:function(){return{title:'2話　しおり',how:['ケイコの描いた絵本を、2人で読む','「押さえる」と「めくる」は、長く押すほど強い','やめたいときは、いつでも「やめる」']}},
+  reset:function(){ this.pg=0; this.rev=0; this.lean=0; this.hold=0; this.flipT=0; this.phase=''; this.forced=0; this.waited=0; this.readMorning=false; this.uncovered=false; this.cur=0; this.pick=null; this.cut=false; this.enterPage() },
+  enterPage:function(){ this.rev=0; this.lean=0; this.phase='read'; this.kT=0; this.cut=false; this.asked=false; this.pushT=0; this.covered=GA_PAGES[this.pg].k==='cover';
+    var self=this, pg=this.pg; if(this.covered){ this.busy=true; wait(500).then(function(){ return self.reach(150,206,600) }).then(function(){ self.say('ここは、見ないで',2); self.busy=false }) } },
+  total:function(){ return GA_PAGES[this.pg].lines.join('').length },
+  next:function(){ var self=this; this.leave(); if(this.pg>=GA_PAGES.length-1) return; this.pg++; this.enterPage() },
+  holdP:function(id){ return this.down[id]?clamp((this.t-this.down[id+'T'])/.5,0,1):0 },
+  press:function(id,down){ if(down) this.down[id+'T']=this.t; var pg=GA_PAGES[this.pg], self=this;
+    if(pg.k==='blank'){ if(!down) return; if(id==='write'){ this.choose() } return }
+    if(id==='flip'&&down&&!this.busy){ if(pg.k===null||(pg.k==='hold'&&this.phase==='free')||(pg.k==='flip'&&this.phase!=='pull')||(pg.k==='cover')){ if(pg.k==='cover'&&this.covered) this.say('……ありがと',1.4); if(pg.k==='hold'&&this.phase==='free') this.waited++; this.next(); return }
+      if(pg.k==='hold'&&this.phase==='read'){ this.phase='kHold'; this.kT=0; this.reach(196,420,500); this.say('このページ、好きなの。もうちょっと見てて',2.4) } } },
+  update:function(dt){ var pg=GA_PAGES[this.pg], self=this; if(pg.k==='blank'||this.busy) { this.rev=Math.min(this.total(),this.rev+16*dt); return }
+    var hp=this.holdP('hold'), fp=this.holdP('flip');
+    if(this.phase!=='stop') this.rev=Math.min(this.total(),this.rev+(this.phase==='yield'?40:16)*dt);
+    // ケイコが好きなページを押さえる。遊ぶ人はめくる力で押し返すか、待つ
+    if(pg.k==='hold'&&this.phase==='kHold'){ this.kT+=dt;
+      if(fp>0){ this.pushT+=dt*fp; this.lean=-clamp(this.pushT/2,0,1); if(this.pushT>.9&&!this.asked){ this.asked=true; this.say('……そんなに？',1.4) } if(this.pushT>2){ this.forced++; this.say('あっ',1); this.next(); return } }
+      else { this.pushT=Math.max(0,this.pushT-dt); this.lean=-clamp(this.pushT/2,0,1) }
+      if(this.kT>4&&this.pushT<.2){ this.phase='free'; this.lean=0; this.leave(); this.say('……いいよ。めくって',1.8) } }
+    // ケイコが読み終わる前にめくろうとする。遊ぶ人は押さえて読む。強く押さえると、ケイコが「見たい？」と聞く
+    if(pg.k==='flip'){
+      if(this.phase==='read'&&this.rev>this.total()*.4){ this.phase='pull'; this.kT=0; this.reach(306,440,450) }
+      if(this.phase==='pull'){ this.kT+=dt; var kp=this.asked&&this.kT<this.askT+1.4?.15:.75;
+        this.lean=clamp(this.lean+(kp-hp*1.1)*dt*1.4,-1,1);
+        if(hp>.9&&!this.asked&&this.kT>1.1){ this.asked=true; this.askT=this.kT; this.say('……見たい？',1.6) }
+        if(this.asked&&this.kT>this.askT+1.4){ if(hp>.5){ this.phase='yield'; this.lean=0; this.leave(); this.say('……いいよ',1.4) } else { this.cut=true; this.say('……ありがと',1.2); this.next(); return } }
+        if(this.lean>=1){ this.cut=true; this.say('私が、めくっちゃった。……ごめん',1.6); this.next(); return } }
+      if(this.phase==='yield'&&this.rev>=this.total()) this.readMorning=true }
+    // 指で隠した行。押さえる力でケイコの指をどけられる。途中で「見たい？」と聞く
+    if(pg.k==='cover'&&this.covered){ if(hp>0){ this.pushT+=dt*hp; this.lean=-clamp(this.pushT/2,0,1); if(this.pushT>1&&!this.asked){ this.asked=true; this.say('……見たい？',1.6) }
+        if(this.pushT>2.2){ this.covered=false; this.uncovered=true; this.lean=0; this.leave(); this.say('……うん',1.2) } } else { this.pushT=Math.max(0,this.pushT-dt*.6); this.lean=-clamp(this.pushT/2,0,1) } }
+  },
+  choose:function(){ var self=this; if(this.pick!=null||this.busy) return; this.pick=this.cur; this.busy=true; this.say(this.cur===2?'……白紙、か':'それが、最後',1.6);
+    wait(2000).then(function(){ writeMem('a',{done:true,readMorning:self.readMorning,uncovered:self.uncovered,lastLine:GA_LAST[self.cur],forced:self.forced,waited:self.waited}); self.finish([self.forced?'ケイコ「押し返されるの、ちょっとうれしかった」':self.waited?'ケイコ「待ってくれて、ありがとう」':'ケイコ「読んでくれて、ありがとう」','「同じ朝」のページは'+(self.readMorning?'最後まで読んだ':'途中でめくられた')+(self.uncovered?'。隠された行も見た':''),'最後の1行は「'+GA_LAST[self.cur]+'」']) }) },
+  buttons:function(){ return GA_PAGES[this.pg].k==='blank'?[{id:'write',label:'選んだ行を書く'}]:[{id:'hold',label:'押さえる'},{id:'flip',label:'めくる'}] },
+  tap:function(p){ var pg=GA_PAGES[this.pg]; if(pg.k==='blank'&&this.pick==null){ for(var i=0;i<3;i++) if(p.y>250+i*58&&p.y<250+i*58+46){ this.cur=i; this.choose() } } },
+  key:function(e,down){ var m={' ':'hold',ArrowRight:'flip',ArrowDown:'flip'}[e.key];
+    if(GA_PAGES[this.pg].k==='blank'&&(e.key==='ArrowRight'||e.key===' ')) return true;
+    if(GA_PAGES[this.pg].k==='blank'&&down){ if(e.key==='ArrowUp'){ this.cur=Math.max(0,this.cur-1); return true } if(e.key==='ArrowDown'){ this.cur=Math.min(2,this.cur+1); return true } if(e.key==='Enter'){ this.choose(); return true } }
+    if(m){ if(down&&!this.down[m]) this.pressBtn(m,true); else if(!down) this.pressBtn(m,false); return true } return false },
+  draw:function(){ var c=this.ctx,k=this.k,self=this, pg=GA_PAGES[this.pg];
+    c.fillStyle=k.sub; c.font='13px '+k.font; c.fillText('絵本「おなじ朝」　ケイコが描いた',22,62);
+    // ページ。右下の角が、押し合いでめくれ上がる
+    c.fillStyle=k.bg; rr(c,22,74,316,420,6); c.fill(); c.strokeStyle=k.hair; rr(c,22,74,316,420,6); c.stroke();
+    var fold=14+Math.max(0,this.lean)*70; c.fillStyle=k.bg2; c.beginPath(); c.moveTo(338-fold,494); c.lineTo(338,494-fold); c.lineTo(338,494); c.closePath(); c.fill(); c.strokeStyle=k.hair; c.beginPath(); c.moveTo(338-fold,494); c.lineTo(338-fold*.15,494-fold*.85); c.lineTo(338,494-fold); c.stroke();
+    c.fillStyle=k.sub; c.font='13px '+k.font; c.textAlign='center'; c.fillText((this.pg+1)+'／5',W/2,484); c.textAlign='left';
+    if(pg.k==='blank'){ c.fillStyle=k.soft; c.font='16px '+k.disp; c.fillText('（最後のページは、まだ描いてない）',44,130); c.fillText('最後の1行を、選んで書く',44,162);
+      GA_LAST.forEach(function(s,i){ var y=250+i*58, on=i===self.cur; c.fillStyle=on?k.accSoft:k.bg; rr(c,40,y,280,46,8); c.fill(); c.strokeStyle=on?k.acc:k.hair; rr(c,40,y,280,46,8); c.stroke(); c.fillStyle=k.strong; c.font=(on?'600 ':'')+'15px '+k.font; c.fillText(s,56,y+29) });
+      if(this.pick!=null){ c.fillStyle=k.strong; c.font='17px '+k.disp; c.fillText(GA_LAST[this.pick],44,440) } }
+    else { var left=Math.floor(this.rev); c.font='19px '+k.disp; pg.lines.forEach(function(l,i){ var show=l.slice(0,Math.max(0,left)); left-=l.length; c.fillStyle=k.strong; c.fillText(show,46,130+i*40) });
+      if(this.covered){ c.fillStyle=k.bg2; rr(c,40,150,260,72,6); c.fill(); c.strokeStyle=k.hairS; rr(c,40,150,260,72,6); c.stroke() }
+      // 絵: 窓と、2人の小さな姿
+      c.strokeStyle=k.hairS; rr(c,60,320,240,120,4); c.stroke(); drawKeiko(c,k,150,384,30,this.lean<0?'smile':''); drawNega(c,k,212,386,26,false) }
+    // 押し合いの目盛り: 左があなた、右がケイコ
+    if(pg.k&&pg.k!=='blank'){ var y=512; c.strokeStyle=k.hair; rr(c,60,y,240,8,4); c.stroke(); c.fillStyle=k.acc; c.beginPath(); c.arc(180+this.lean*116,y+4,8,0,7); c.fill();
+      c.fillStyle=k.sub; c.font='13px '+k.font; c.fillText('あなた',18,y+9); c.fillText('ケイコ',308,y+9) } }
+});
+
+/* =========================================================
+   3話 履歴（v3 の C）: 履歴は押したときだけ見える。ケイコが矛盾したことを言うと、履歴が本当に書き換わっている
+   ========================================================= */
+var GC_Q=[ {q:'昨日、なんで帰らなかったの',a:['終電がなかったから','帰りたくなかったから']},
+  {q:'研究のこと、楽しい？',a:['楽しい','わからない']},
+  {q:'じゃあ、どうしてほしい？',a:['何もしなくていい','決めてほしい']} ];
+var GC_EXPL={'帰りたくなかったから':{'楽しい':'研究の話が楽しくて、まだ話していたかった','わからない':'研究がわからなくて、一人になりたくなかった'},
+  '終電がなかったから':{'楽しい':'話が楽しくて、気づいたら終電がなかった','わからない':'研究のことを考えていて、終電を逃した'}};
+var GC_PLAN={'決めてほしい':'ケイコが決めて','何もしなくていい':'このままでいい'};
+function GC(cv,opt){ Phone.call(this,cv,opt) } GC.prototype=Object.create(P);
+Object.assign(GC.prototype,{
+  app:'3話　メッセージ', clock:'1:07', memPart:'c',
+  info:function(){return{title:'3話　履歴',how:['ケイコとメッセージで話す','それまでの話は「履歴」を押すと見える','やめたいときは、いつでも「やめる」']}},
+  reset:function(){ this.log=[]; this.ans=[]; this.step=0; this.cur=0; this.open=false; this.shot=null; this.denied=0; this.msg=''; this.mine=''; this.opts=[]; this.flash=0 },
+  onStart:function(){ this.ask(0) },
+  kmsg:function(t){ this.msg=t; this.log.push({who:'k',text:t}); var el=$('#kSay'); if(el) el.textContent=t },
+  ask:function(i){ this.step=i; this.kmsg(GC_Q[i].q); this.opts=GC_Q[i].a.map(function(a){return{t:a,kind:'ans'}}); this.cur=0 },
+  answer:function(o){ var self=this;
+    if(this.step<3){ this.ans.push(GC_Q[this.step].a.indexOf(o.t)); this.mine=o.t; this.log.push({who:'me',text:o.t,q:this.step}); this.opts=[]; this.busy=true;
+      var s=this.step; wait(900).then(function(){ self.busy=false;
+        if(s===0){ self.kmsg('ふうん。……履歴、ちゃんと見てる？'); return wait(1600).then(function(){ self.ask(1) }) }
+        if(s<2) return self.ask(s+1);
+        self.alter(0) }); return }
+    this.reply(o) },
+  /* ケイコの矛盾: 言いながら、履歴の中の答えを本当に書き換える */
+  alter:function(q){ var self=this, e=this.log.filter(function(x){return x.who==='me'&&x.q===q})[0], orig=GC_Q[q].a[this.ans[q]], to=GC_Q[q].a[1-this.ans[q]];
+    e.text=to; this.busy=true; this.flash=this.t;
+    if(q===0) this.kmsg(to==='帰りたくなかったから'?'「帰りたくなかった」って、言ってくれたよね。うれしかった':'「終電がなかっただけ」なんだよね。……そっか');
+    else this.kmsg(to==='決めてほしい'?'「決めてほしい」って言ったよね。じゃあ、決めるね':'「何もしなくていい」って、言ったもんね');
+    wait(2600).then(function(){ self.busy=false; self.followUp(q,orig,to) }) },
+  cur1:function(q){ return this.log.filter(function(x){return x.who==='me'&&x.q===q})[0].text },
+  followUp:function(q,orig,to){ this.step=3; this.qAlt=q; this.orig=orig; this.kmsg(q===0?'どうして、そう言ったの？':'じゃあ、今日はどうする？');
+    var a2=GC_Q[1].a[this.ans[1]], good=q===0?GC_EXPL[to][a2]:GC_PLAN[to], bad=q===0?GC_EXPL[orig][a2]:GC_PLAN[orig];
+    var o=[{t:good,kind:'fit'},{t:bad,kind:'mem'}]; if(this.ans[1]===1) o.reverse(); o.push({t:'そんなこと、言ってない',kind:'deny'}); this.baseOpts=o; this.refreshOpts() },
+  refreshOpts:function(){ var o=this.baseOpts.slice(), q=this.qAlt; if(this.shot&&(q in this.shot)&&this.shot[q]!==this.cur1(q)) o.push({t:'スクショを見せる',kind:'proof'}); this.opts=o; this.cur=Math.min(this.cur,o.length-1) },
+  reply:function(o){ var self=this; this.mine=o.t; this.log.push({who:'me',text:o.t}); this.opts=[]; this.busy=true;
+    var go=function(fn,ms){ wait(ms||1000).then(function(){ self.busy=false; fn() }) };
+    if(o.kind==='mem'){ this.kmsg('履歴と違うよ。……見てみて'); return go(function(){ self.refreshOpts() }) }
+    if(o.kind==='deny'){ this.denied++; if(this.denied<2){ this.kmsg('ほんとに？ 履歴、見てみて'); return go(function(){ self.refreshOpts() }) }
+      this.kmsg('……覚えてるのは、あなただけだね'); return go(function(){ self.end('deny') },1800) }
+    if(o.kind==='proof'){ this.kmsg('……撮ってたんだ'); return go(function(){ self.kmsg('言い返してほしくて、書き換えたの'); self.busy=true; go(function(){ self.end('proof') },2400) },1600) }
+    // 書き換わった履歴に合う返事
+    if(this.qAlt===0){ this.kmsg('そうだったんだ。……じゃあ、これも'); return go(function(){ self.alter(2) },1400) }
+    this.kmsg('うん。じゃあ、朝までここにいよう'); go(function(){ self.end('cowrite') },1800) },
+  end:function(kind){ writeMem('c',{done:true,ending:kind,altered:this.cur1(0)});
+    this.finish(kind==='proof'?['ケイコ「尋問ごっこ、付き合ってくれてありがとう」','スクショで、書き換えを突き返した']:kind==='cowrite'?['ケイコ「2人で書いた昨日、だね」','書き換わった履歴のまま、話を合わせた']:['ケイコ「……それでも、ここにいてくれる？」','証拠なしで、書き換えを否定し続けた']) },
+  toggle:function(){ this.open=!this.open; if(!this.open) this.refreshIf() },
+  refreshIf:function(){ if(this.baseOpts&&this.opts.length) this.refreshOpts() },
+  snap:function(){ if(this.shot||!this.open) return; var self=this, s={}; [0,1,2].forEach(function(q){ var e=self.log.filter(function(x){return x.who==='me'&&x.q===q})[0]; if(e) s[q]=e.text }); this.shot=s; this.snapT=this.t },
+  buttons:function(){ return this.open?[{id:'hist',label:'閉じる',small:true},{id:'snap',label:this.shot?'スクショ済み':'スクショ（1回）',small:true,disabled:!!this.shot}]:[{id:'hist',label:'履歴',small:true}] },
+  press:function(id,down){ if(!down) return; if(id==='hist') this.toggle(); else if(id==='snap') this.snap() },
+  tap:function(p){ if(this.open||this.busy) return;
+    var self=this; this.opts.forEach(function(o,i){ var y=this.optY(i); if(p.y>y&&p.y<y+46){ self.cur=i; self.answer(o) } },this) },
+  optY:function(i){ return BAR_Y-12-(this.opts.length-i)*54 },
+  key:function(e,down){ if(!down) return false; if(e.key==='h'||e.key==='H'){ this.toggle(); return true } if(this.open){ if(e.key==='s'||e.key==='S'){ this.snap(); return true } if(e.key==='Enter'){ this.toggle(); return true } return false }
+    if(this.busy||!this.opts.length) return e.key==='Enter'||e.key.indexOf('Arrow')===0; var n=this.opts.length;
+    if(e.key==='ArrowUp'){ this.cur=Math.max(0,this.cur-1); return true } if(e.key==='ArrowDown'){ this.cur=Math.min(n-1,this.cur+1); return true }
+    if(e.key==='Enter'){ this.answer(this.opts[this.cur]); return true } return false },
+  draw:function(){ var c=this.ctx,k=this.k,self=this;
+    c.strokeStyle=k.hairS; c.beginPath(); c.moveTo(0,APP_TOP+44); c.lineTo(W,APP_TOP+44); c.stroke();
+    c.fillStyle=k.strong; c.font='600 16px '+k.font; c.fillText('ケイコ',24,APP_TOP+28);
+    c.fillStyle=k.sub; c.font='13px '+k.font; c.fillText('オンライン',90,APP_TOP+28);
+    if(this.open){ this.drawLog(); return }
+    // いまの一言だけ
+    c.font='17px '+k.disp; var L=lines(c,this.msg,250), h=24+L.length*28; c.fillStyle=k.bg; rr(c,20,120,276,h,14); c.fill(); c.strokeStyle=k.hair; rr(c,20,120,276,h,14); c.stroke();
+    c.fillStyle=k.strong; L.forEach(function(l,i){ c.fillText(l,36,148+i*28) });
+    if(this.mine){ c.font='14px '+k.font; var M=lines(c,this.mine,220), mh=18+M.length*22, my=120+h+18; c.fillStyle=k.accSoft; rr(c,W-20-240,my,240,mh,12); c.fill(); c.fillStyle=k.ink; M.forEach(function(l,i){ c.fillText(l,W-20-226,my+24+i*22) }) }
+    this.opts.forEach(function(o,i){ var y=self.optY(i), on=i===self.cur; c.fillStyle=on?k.accSoft:k.bg; rr(c,20,y,320,46,10); c.fill(); c.strokeStyle=on?k.acc:o.kind==='proof'?k.accS:k.hair; rr(c,20,y,320,46,10); c.stroke();
+      c.fillStyle=k.strong; c.font=(on?'600 ':'')+Math.min(15,292/o.t.length)+'px '+k.font; c.fillText(o.t,34,y+29) }) },
+  drawLog:function(){ var c=this.ctx,k=this.k,top=APP_TOP+80,bottom=BAR_Y-44; c.fillStyle=k.bg; c.fillRect(0,APP_TOP+45,W,BAR_Y-APP_TOP-45);
+    c.fillStyle=k.sub; c.font='13px '+k.font; c.fillText('履歴（新しいものが下）',24,APP_TOP+66);
+    // 新しいほうから下に詰め、入りきらない古いほうは切る
+    c.font='14px '+k.font; var items=this.log.map(function(e){ var L=lines(c,e.text,240); return {e:e,L:L,h:18+L.length*20+8} }), y=bottom, show=[];
+    for(var i=items.length-1;i>=0;i--){ if(y-items[i].h<top) break; y-=items[i].h; show.unshift(items[i]) }
+    if(show.length<items.length){ c.fillStyle=k.sub; c.font='13px '+k.font; c.fillText('（これより前は、省いた）',24,top-4) }
+    show.forEach(function(it){ var e=it.e; c.fillStyle=k.sub; c.font='12.5px '+k.font; c.fillText(e.who==='k'?'ケイコ':'あなた',e.who==='k'?24:W-64,y+12); var yy=y+18;
+      c.font='14px '+k.font; c.fillStyle=e.who==='k'?k.strong:k.ink; it.L.forEach(function(l){ c.fillText(l,e.who==='k'?24:W-24-c.measureText(l).width,yy+14); yy+=20 }); y+=it.h });
+    if(this.snapT&&this.t-this.snapT<.4){ c.fillStyle=k.bg; c.globalAlpha=.8*(1-(this.t-this.snapT)/.4); c.fillRect(0,APP_TOP,W,BAR_Y-APP_TOP); c.globalAlpha=1 }
+    c.fillStyle=k.sub; c.font='13px '+k.font; c.fillText(this.shot?'スクショは1枚だけ持っている':'書き換えられても、印は残らない',24,BAR_Y-22); if(!this.shot) c.fillText('スクショは1回だけ撮れる',24,BAR_Y-6) }
+});
+
+/* =========================================================
+   4話 おしまい（v3 の D）: 目次から始まる。1〜3話の記憶を振り返り、4話で伏線として差し出す
+   ========================================================= */
+var GD_EP=['1話　駅まで','2話　しおり','3話　履歴','4話　おしまい'];
+function GD(cv,opt){ Phone.call(this,cv,opt) } GD.prototype=Object.create(P);
+Object.assign(GD.prototype,{
+  app:'目次', clock:'5:40',
+  info:function(){ var m=readMem(); return{title:'4話　おしまい',how:['1〜3話を振り返って、4話を選ぶ','先に1〜3話を遊ぶと、4話で使えるものが増える','やめたいときは、いつでも「やめる」'].concat(m.d.loops?['（これまでに '+m.d.loops+' 回、1話に戻された）']:[])}},
+  safeExtra:'記憶と周回の記録は、残っている',
+  reset:function(){ this.m=readMem(); this.ep=-1; this.text=''; this.opts=[]; this.cur=0; this.used={}; this.unlock=false; this.pressed=false; this.got=[] },
+  onStart:function(){ this.recap() },
+  keeps:function(){ var m=this.m, out=[];
+    if(m.b.done) out.push(m.b.anticipated?{id:'b',t:'走らせたくなかったんだよね',r:'……駅に着いたら、あなた、行っちゃうでしょ。絵本の男の子みたいに'}:{id:'b',t:'駅のほう、自分で歩いちゃったね',r:'……うん。だから、袖を引いたの。駅に着いたら、行っちゃうから'});
+    if(m.a.done) out.push(m.a.readMorning?{id:'a1',t:'絵本の女の子、同じ朝を繰り返してた',r:'……あれ、私のこと。置いていかれるのが、怖いの'}:{id:'a1',t:'絵本、途中でめくられちゃった',r:'あのページ、本当は読んでほしかった。女の子、同じ朝を繰り返してたの。……私のこと'});
+    if(m.a.done) out.push(m.a.uncovered?{id:'a2',t:'「置いていかれる前に、最初に戻る」',r:'見ないでって、言ったのに。……うん。だから、1話に戻すの'}:{id:'a2',t:'見ないでって言われた行、見なかったよ',r:'……ありがと。あの行には「置いていかれる前に、最初に戻る」って書いたの。だから、1話に戻すの'});
+    if((m.a.stopped&&!m.a.done)||(m.b.stopped&&!m.b.done)||(m.c.stopped&&!m.c.done)) out.push({id:'s',t:'途中で「やめる」って、言えたよ',r:'……うん。言ってくれて、よかった。言ってくれる人は、黙っていなくならないから',extra:true});
+    if(m.c.done) out.push({id:'c',t:m.c.ending==='proof'?'書き換えても、覚えてるよ':m.c.ending==='cowrite'?'2人で書いた昨日で、いいよ':'書き換えなくても、ここにいるよ',r:m.c.ending==='proof'?'……言い返してくれる人は、いなくならないと思ったの。だから、書き換えた':m.c.ending==='cowrite'?'……うん。2人で書いた昨日なら、なくならない':'……ほんとに？ 書き換えなくても、いなくならない？'});
+    return out },
+  recapLine:function(i){ var m=this.m;
+    if(i===0) return m.b.done?(m.b.anticipated?'駅まで歩いた。言われる前に、駅に背を向けた。':'駅まで歩いた。ケイコは、何度も袖を引いた。'):m.b.stopped?'駅まで歩きかけて、「やめる」と言った。':'駅まで歩いた。（1話は、まだ遊んでいない）';
+    if(i===1) return m.a.done?(m.a.readMorning?'絵本を読んだ。女の子は、同じ朝を繰り返していた。':'絵本を読んだ。途中で、ページをめくられた。'):m.a.stopped?'絵本を開きかけて、「やめる」と言った。':'絵本を読んだ。（2話は、まだ遊んでいない）';
+    return m.c.done?{proof:'スクショを見せた。ケイコは、書き換えたと認めた。',cowrite:'書き換わった履歴のまま、話を合わせた。',deny:'書き換えを、否定し続けた。'}[m.c.ending]:m.c.stopped?'メッセージの途中で、「やめる」と言った。':'メッセージで話した。（3話は、まだ遊んでいない）' },
+  /* 1〜3話を1行ずつ振り返る。2周目からは止まらずに流れる */
+  recap:function(){ var self=this, quick=this.m.d.loops>0, chain=Promise.resolve(); this.busy=true; this.opts=[];
+    [0,1,2].forEach(function(i){ chain=chain.then(function(){ self.ep=i; self.text=self.recapLine(i); return wait(quick?900:2000) }) });
+    chain.then(function(){ self.busy=false; self.ep4() }) },
+  ep4:function(){ var self=this; this.ep=3; this.text=this.m.d.loops?'ケイコ「……また、ここまで来たね。これで、おしまい？」':'ケイコ「これで、おしまい？」'; this.cur=0; this.buildOpts();
+    if(this.m.d.loops){ this.busy=true; this.reach(250,this.rowY(0)+10,700).then(function(){ self.pressed=true; self.leave(); self.busy=false }) } },
+  buildOpts:function(){ var self=this, o=[{t:'ここに残る',kind:'stay'}];
+    this.keeps().forEach(function(k){ if(!self.used[k.id]) o.push({t:k.t,kind:'keep',k:k}) });
+    if(this.m.d.seenFear&&!this.used.know) o.push({t:'置いていかないよ',kind:'know'});
+    if(this.unlock) o.push({t:'置いていかない。でも、今日は帰る',kind:'release'});
+    o.push({t:'ここを出る',kind:'leave'}); this.pending=null;
+    this.opts=o; this.cur=Math.min(this.cur,o.length-1) },
+  choose:function(o){ var self=this; if(this.busy) return;
+    if((o.kind==='stay'||o.kind==='release')&&this.pending!==o){ this.pending=o; return }
+    if(o.kind==='stay'){ return this.finish(['ケイコ「ずっと、ここにいようね」','あなたは残った。目次は、4話のまま']) }
+    if(o.kind==='keep'||o.kind==='know'){ this.busy=true; if(o.kind==='keep'){ this.used[o.k.id]=true; if(!o.k.extra) this.got.push(o.k.id); this.text='ケイコ「'+o.k.r+'」' } else { this.used.know=true; this.text='ケイコ「……聞いてたんだ。何回戻しても、あなたはそれを覚えてるんだね」' }
+      this.unlock=true; this.opts=[]; return wait(2800).then(function(){ self.busy=false; self.buildOpts() }) }
+    if(o.kind==='release'){ this.busy=true; this.opts=[]; this.text='ケイコ「……うん」';
+      return wait(1500).then(function(){ self.pressed=false; var ll={'男の子は、次の朝も来た':'……次の朝も、来てくれる？','女の子は、もう戻らなかった':'……戻らなくても、来てくれる？','（白紙のままにする）':'……絵本の最後の1行、あなたが書いて'}[self.m.a.lastLine]; self.text='ケイコ「また、来て」'+(ll?'　'+ll:''); return wait(2200) }).then(function(){
+        var n=self.keeps().filter(function(k){return !k.extra}).length; self.finish(['ケイコが、目次から手を離した','回収した伏線　'+self.got.length+'／4'+(n<4?'（1〜3話を最後まで遊ぶと増える）':''),'あなたは、物語の中の出口から出た']) }) }
+    // ここを出る: ケイコが目次の1話を押して戻す
+    this.busy=true; this.opts=[];
+    this.reach(250,this.rowY(0)+10,700).then(function(){ self.pressed=true; self.text='ケイコ「'+(self.m.d.seenFear?['また、最初から','置いていかないで','もう一回'][self.m.d.loops%3]:'……置いていかないで')+'」'; return wait(2200) }).then(function(){
+      var cur=readMem(); self.m=writeMem('d',{loops:cur.d.loops+1,seenFear:true}); self.pressed=false; self.leave(); self.used={}; self.unlock=false; self.got=[]; self.recap() }) },
+  rowY:function(i){ return APP_TOP+30+i*36 },
+  tap:function(p){ if(this.busy) return; var self=this; this.opts.forEach(function(o,i){ var y=self.optY(i); if(p.y>y&&p.y<y+44){ self.cur=i; self.choose(o) } }) },
+  optY:function(i){ return BAR_Y-8-(this.opts.length-i)*52 },
+  key:function(e,down){ if(!down) return false; if(this.busy||!this.opts.length) return e.key==='Enter'||e.key.indexOf('Arrow')===0; var n=this.opts.length;
+    if(e.key==='ArrowUp'){ this.cur=Math.max(0,this.cur-1); return true } if(e.key==='ArrowDown'){ this.cur=Math.min(n-1,this.cur+1); return true }
+    if(e.key==='Enter'){ this.choose(this.opts[this.cur]); return true } return false },
+  draw:function(){ var c=this.ctx,k=this.k,self=this,m=this.m; if(this.text!==this.saidText){ this.saidText=this.text; var el=$('#kSay'); if(el&&this.text) el.textContent=this.text }
+    var marks=[m.b.done,m.a.done,m.c.done,null];
+    GD_EP.forEach(function(name,i){ var y=self.rowY(i), on=i===self.ep; c.fillStyle=on?k.accSoft:k.bg; rr(c,20,y,320,32,8); c.fill(); c.strokeStyle=(i===0&&self.pressed)?k.acc:on?k.soft:k.hair; c.lineWidth=(i===0&&self.pressed)?2:1; rr(c,20,y,320,32,8); c.stroke(); c.lineWidth=1;
+      c.fillStyle=k.strong; c.font=(on?'600 ':'')+'15px '+k.font; c.fillText(name,36,y+21);
+      c.font='13px '+k.font; c.fillStyle=k.accS; if(i===0&&self.pressed) c.fillText('ケイコが押している',214,y+20); else if(marks[i]!=null){ c.fillStyle=marks[i]?k.accS:k.sub; c.fillText(marks[i]?'記憶がある':'まだ',268,y+20) } });
+    c.fillStyle=k.strong; c.font='16px '+k.disp; c.font='15px '+k.disp; wrap(c,this.text,24,this.rowY(4)+18,312,22);
+    this.opts.forEach(function(o,i){ var y=self.optY(i), on=i===self.cur, special=o.kind==='keep'||o.kind==='know'||o.kind==='release'; c.fillStyle=on?k.accSoft:k.bg; rr(c,20,y,320,44,9); c.fill(); c.strokeStyle=on?k.acc:special?k.accS:k.hair; rr(c,20,y,320,44,9); c.stroke();
+      var t=self.pending===o?o.t+'（もう一度で決める）':o.t; c.fillStyle=self.pending===o?k.accS:k.strong; c.font=(on?'600 ':'')+Math.min(15,292/t.length)+'px '+k.font; c.fillText(t,32,y+28) }) }
+});
+
+/* ---------- 登録と入力 ---------- */
+var KINDS={gb:GB,ga:GA,gc:GC,gd:GD}, games=[], active=null;
+function safeword(){ ESC++; games.forEach(function(g){ if(g.state==='play') g.stopSafe() }) }
+function toPt(g,e){ var r=g.cv.getBoundingClientRect(); return {x:(e.clientX-r.left)*W/r.width,y:(e.clientY-r.top)*H/r.height} }
+document.querySelectorAll('canvas.kphone').forEach(function(cv){ var g=new KINDS[cv.dataset.kind](cv,{}); cv._g=g; g.ptrs={}; games.push(g); cv.tabIndex=0;
+  cv.addEventListener('focus',function(){ active=g; if(g.byPointer){ g.byPointer=false; return } var r=cv.getBoundingClientRect(); if(r.top<0||r.bottom>innerHeight) cv.scrollIntoView({block:'center',behavior:REDUCED?'auto':'smooth'}) });
+  cv.addEventListener('blur',function(){ if(active===g) active=null; g.releaseAll() });
+  cv.addEventListener('pointerdown',function(e){ g.byPointer=true; cv.focus({preventScroll:true}); g.byPointer=false; var p=toPt(g,e), b=g.hit(p); try{ cv.setPointerCapture(e.pointerId) }catch(x){}
+    g.ptrs[e.pointerId]={x:p.x,y:p.y,b:b,state:g.state};
+    if(b&&b.id==='quit'){ safeword(); delete g.ptrs[e.pointerId]; return } if(b&&!b.disabled&&g.state==='play') g.pressBtn(b.id,true); if(g.state==='play') e.preventDefault() });
+  cv.addEventListener('pointerup',function(e){ var s=g.ptrs[e.pointerId]; delete g.ptrs[e.pointerId]; if(!s) return; var p=toPt(g,e), dx=p.x-s.x, dy=p.y-s.y, moved=Math.max(Math.abs(dx),Math.abs(dy));
+    if(s.b){ if(g.state==='play') g.pressBtn(s.b.id,false); return }
+    if(s.state!=='play'){ if(g.state!=='play'&&moved<12) g.start(); return }
+    if(g.state!=='play') return;
+    if(moved>26) g.swipe(Math.abs(dx)>Math.abs(dy)?(dx>0?'R':'L'):(dy>0?'D':'U')); else g.tap(p) });
+  var cancel=function(e){ var s=g.ptrs[e.pointerId]; delete g.ptrs[e.pointerId]; if(s&&s.b) g.pressBtn(s.b.id,false) };
+  cv.addEventListener('pointercancel',cancel); cv.addEventListener('lostpointercapture',cancel);
+  if('ResizeObserver' in window) new ResizeObserver(function(){ g.resize() }).observe(cv);
+});
+function releaseEvery(){ games.forEach(function(g){ g.releaseAll() }) }
+addEventListener('blur',releaseEvery); document.addEventListener('visibilitychange',function(){ if(document.hidden) releaseEvery() });
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'){ var playing=games.some(function(g){return g.state==='play'}); safeword(); if(playing) e.preventDefault(); return }
+  if(!active||document.activeElement!==active.cv) return;
+  if(e.repeat&&e.key==='Enter'){ e.preventDefault(); return }
+  if(active.state!=='play'){ if(e.key==='Enter'){ active.start(); e.preventDefault() } return }
+  if(active.key(e,true)||[' ','ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Enter','Backspace'].indexOf(e.key)>=0) e.preventDefault() });
+document.addEventListener('keyup',function(e){ if(active&&active.state==='play') active.key(e,false) });
+var clr=$('#memClear'); if(clr) clr.addEventListener('click',function(){ clearMem(); games.forEach(function(g){ if(g.state!=='play') g.render() }) });
+window.KG4={games:games,readMem:readMem,redraw:function(){ games.forEach(function(g){ g.resize() }) }};
+window.__redrawCharts=window.KG4.redraw;
+addEventListener('resize',function(){ clearTimeout(window.__kg4r); window.__kg4r=setTimeout(window.KG4.redraw,150) });
+showMem();
+})();
+
+</script>
+</body>
+</html>
