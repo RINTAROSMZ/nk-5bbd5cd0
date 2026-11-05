@@ -1,0 +1,18 @@
+{
+  "characters": [
+    {
+      "id": "keiko", "display_name": "ケイコ", "speech_speed": 0.85, "pause_scale": 1.35, "type_pitch": 2.0, "name_color": "#f2d7df",
+      "name_plate": "ui_name_keiko",
+      "sprites": ["fg_keiko_normal", "fg_keiko_smile", "fg_keiko_smug", "fg_keiko_disgust", "fg_keiko_closeup"],
+      "expression_se": {"fg_keiko_smile": "se_expr_bright", "fg_keiko_smug": "se_expr_sly", "fg_keiko_awkward": "se_expr_flinch", "fg_keiko_sad": "se_expr_down"},
+      "expression_neutral": ["fg_keiko_normal", "fg_keiko_puzzled"], "expression_se_marked_only": true, "expression_se_gap": 10.0, "expression_se_max": 3
+    },
+    {
+      "id": "nega", "display_name": "ネガ", "speech_speed": 1.12, "pause_scale": 0.8, "type_pitch": 0.812, "name_color": "#cfd8ef",
+      "name_plate": "ui_name_nega"
+    },
+    { "id": "student_commerce", "display_name": "商学部学生", "name_plate": "ui_name_student_commerce" },
+    { "id": "student_science", "display_name": "理工学部学生", "name_plate": "ui_name_student_science" },
+    { "id": "everyone", "display_name": "みんな", "name_color": "#e8dca0" }
+  ]
+}

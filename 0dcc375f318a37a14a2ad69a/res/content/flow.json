@@ -1,0 +1,9 @@
+{
+  "player": "nega",
+  "stages": [
+    {"type": "comic", "id": "chapter_01_opening"},
+    {"type": "chapter", "id": "chapter_01"},
+    {"type": "comic", "id": "chapter_01_after"},
+    {"type": "comic", "id": "finale"}
+  ]
+}
