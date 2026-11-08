@@ -1,0 +1,14 @@
+{
+  "id": "ekimade_after",
+  "directory": "res://res/comic/chapter_01",
+  "end_label": "つづきを読む",
+  "panel_layout": {
+    "directory": "res://res/comic/chapter_01/panels",
+    "layout_width": 1080, "source_page_width": 1240, "max_panel_width": 1000, "max_zoom": 1.6,
+    "gap": 90, "head_gap": 700, "tail_gap": 260,
+    "paper": "@comic_paper",
+    "panels": [
+      {"id": "p3_20"}
+    ]
+  }
+}

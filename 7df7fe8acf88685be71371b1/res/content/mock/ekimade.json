@@ -1,0 +1,751 @@
+{
+  "_doc": "間の章「駅まで」（ホーム画面の 1 区画を覗き込む双六。docs/ekimade_home.md）。規則は web/src/game/ekimade.ts、画面は web/src/screens/ekimade_screen.ts。grid は上の行から、アプリかフォルダの ID を空白で区切って 4 つ（フォルダと . は乗れない）。spots はアプリの ID ごとの区画のイベント。台詞はすべて lines に置き（文字列か、会話窓ごとの配列）、ほかの所（apps の line、spots・peek の text・react・line、rules の intro・why、arrive_lines、self_lines）からはキーで引く。並び・イベント・約束の歩数・時刻・文・見た目・音の値はすべて仮置き（CLAUDE.md §2-6。人が詰める）。最短の手数と着く時刻は ekimade.test.ts が確かめる。どのアプリも初めて入ったときに覗き込み、中身（peek）とケイコの一言（line）を出す",
+  "grid": [
+    "transit2 sns      weather  transit",
+    "f_game   news     f_study  diary",
+    "camera   book     calendar f_tools",
+    "video    f_photo  music    settings",
+    "shop     memo     dev      maps",
+    "message  f_dark   match    f_shop"
+  ],
+  "start": "message",
+  "goal": "transit",
+  "alt_goal": "transit2",
+  "apps": {
+    "weather": {
+      "name": "天気",
+      "icon": 0,
+      "level": 0,
+      "peek": {
+        "title": "天気",
+        "lines": [
+          "自宅　くもり",
+          "登録地点：自宅のみ"
+        ]
+      },
+      "line": "open_weather"
+    },
+    "transit": {
+      "name": "のりかえ",
+      "icon": 1,
+      "level": 0,
+      "peek": {
+        "title": "のりかえ",
+        "lines": [
+          "22:58 発　各駅停車",
+          "次　23:12 発　各駅停車"
+        ]
+      },
+      "line": ""
+    },
+    "dev": {
+      "name": "ビルド",
+      "icon": 3,
+      "level": 1,
+      "peek": {
+        "title": "ビルド",
+        "lines": [
+          "作りかけ 3 件",
+          "最終更新 8 か月前"
+        ]
+      },
+      "line": "open_dev"
+    },
+    "video": {
+      "name": "ドーガ",
+      "icon": 4,
+      "level": 2,
+      "peek": {
+        "title": "再生履歴",
+        "lines": [
+          "カラオケ　この前の曲",
+          "カラオケ　この前の曲（3 回目）"
+        ]
+      },
+      "line": "open_video"
+    },
+    "shop": {
+      "name": "かいもの",
+      "icon": 5,
+      "level": 1,
+      "peek": {
+        "title": "カート",
+        "lines": [
+          "ニット（紺）　1 点",
+          "3 週間、カートに入ったまま"
+        ]
+      },
+      "line": "open_shop"
+    },
+    "news": {
+      "name": "ニュース",
+      "icon": 6,
+      "level": 2,
+      "peek": {
+        "title": "特集",
+        "lines": [
+          "モテる男の夜の習慣 5 選",
+          "④ 女性を駅まで送る"
+        ]
+      },
+      "line": "open_news"
+    },
+    "sns": {
+      "name": "ひとこと",
+      "icon": 7,
+      "level": 3,
+      "peek": {
+        "title": "保存済み",
+        "lines": [
+          "「32 才 FIRE しました。」",
+          "「総資産 30 億。毎日サウナ。」"
+        ]
+      },
+      "line": "open_sns"
+    },
+    "match": {
+      "name": "であい",
+      "icon": 8,
+      "level": 3,
+      "peek": {
+        "title": "プロフィール（下書き）",
+        "lines": [
+          "趣味：",
+          "ひとこと："
+        ]
+      },
+      "line": "open_match"
+    },
+    "diary": {
+      "name": "にっき",
+      "icon": 9,
+      "level": 3,
+      "peek": {
+        "title": "にっき",
+        "lines": [
+          "鍵がかかっています"
+        ]
+      },
+      "line": "open_diary"
+    },
+    "book": {
+      "name": "しおり",
+      "icon": 10,
+      "level": 2,
+      "peek": {
+        "title": "しおり一覧",
+        "lines": [
+          "はじめての SM　第 3 章",
+          "セーフワードの決め方"
+        ]
+      },
+      "line": "open_book"
+    },
+    "camera": {
+      "name": "カメラ",
+      "icon": 11,
+      "level": 0,
+      "peek": {
+        "title": "写真",
+        "lines": [
+          "空 132 枚",
+          "人物 0"
+        ]
+      },
+      "line": "open_camera"
+    },
+    "calendar": {
+      "name": "よてい",
+      "icon": 12,
+      "level": 0,
+      "peek": {
+        "title": "よてい",
+        "lines": [
+          "今日（予定なし）",
+          "明日 1 限"
+        ]
+      },
+      "line": "open_calendar"
+    },
+    "memo": {
+      "name": "メモ",
+      "icon": 13,
+      "level": 0,
+      "peek": {
+        "title": "メモ",
+        "lines": [
+          "話すこと（会ったとき用）",
+          "天気　電車　・（空欄）"
+        ]
+      },
+      "line": "open_memo"
+    },
+    "music": {
+      "name": "おんがく",
+      "icon": 14,
+      "level": 0,
+      "peek": {
+        "title": "さいきん再生",
+        "lines": [
+          "夏空リボン OP（フル）",
+          "再生 214 回"
+        ]
+      },
+      "line": "open_music"
+    },
+    "settings": {
+      "name": "せってい",
+      "icon": 15,
+      "level": 0,
+      "peek": {
+        "title": "せってい",
+        "lines": [
+          "壁紙（変更）",
+          "スクリーンタイム 1 日 9 時間"
+        ]
+      },
+      "line": "open_settings"
+    },
+    "message": {
+      "name": "メッセージ",
+      "icon": 16,
+      "level": 0,
+      "peek": {
+        "title": "トーク",
+        "lines": [
+          "理工 3 年（41）",
+          "母",
+          "公式　クーポン 12 件"
+        ]
+      },
+      "line": "open_message"
+    },
+    "maps": {
+      "name": "ちず",
+      "icon": 17,
+      "level": 0,
+      "peek": {
+        "title": "保存した場所",
+        "lines": [
+          "★ カラオケ（駅前）",
+          "★ 自宅"
+        ]
+      },
+      "line": "open_maps"
+    },
+    "transit2": {
+      "name": "ルート",
+      "icon": 2,
+      "level": 0,
+      "peek": {
+        "title": "ルート",
+        "lines": [
+          "検索 22:40　現在地 → 駅",
+          "徒歩 7 分　22:47 着"
+        ]
+      },
+      "line": ""
+    }
+  },
+  "open_level": 2,
+  "icon_sheet": {
+    "image": "eki_icons_v3",
+    "cols": 5,
+    "rows": 4
+  },
+  "folder_sheet": {
+    "image": "eki_folder_minis",
+    "cols": 6,
+    "rows": 4
+  },
+  "battery_icon": 18,
+  "intro": {
+    "_doc": "導入（序章と同じ会話の画面。漫画のゲートのあと）。拍は順に face（立ち絵の画像 ID）→ still（show・hide でホーム画面の全体のスチル）→ icons（スチルの並びのアイコンとフォルダの透明度。0〜1、-1 は替えない。壁紙の子の顔とリボンを見せる拍で 0.2、光らせる拍の前に 1）→ se（sound.se のキーの効果音）→ hint（出発 → 乗換（緑）→ 乗換 2（紫）を一度ずつ光らせる。その間ケイコは会話窓に「…」）→ line（台詞のキー。offer なら選択肢の問いにし、options の 2 つを出す）。選んだあと accepted か declined → go → 暗転して盤。この間は盤の BGM を鳴らさず ambience（夜の環境音）を鳴らし、盤が明けると同時に盤の BGM。拍・表情・音は仮置き。スチルは最後まで出したままにし、「行こっか」のあとそのまま盤になる",
+    "background": "bg_eki_night_path",
+    "ambience": "amb_eki_night",
+    "ambience_fade_in": 1.0,
+    "ambience_fade_out": 0.6,
+    "beats": [
+      {
+        "face": "fg_keiko_awkward",
+        "line": "intro_borrow"
+      },
+      {
+        "face": "fg_keiko_smug",
+        "line": "intro_unlock"
+      },
+      {
+        "se": "unlock",
+        "face": "fg_keiko_normal",
+        "still": "show",
+        "icons": 0.2,
+        "line": "intro_wallpaper"
+      },
+      {
+        "face": "fg_keiko_puzzled",
+        "line": "intro_ribbon"
+      },
+      {
+        "face": "fg_keiko_smug",
+        "line": "intro_hmm"
+      },
+      {
+        "icons": 1,
+        "hint": true
+      },
+      {
+        "face": "fg_keiko_normal",
+        "line": "intro_goal"
+      },
+      {
+        "face": "fg_keiko_smile",
+        "line": "intro_memorize"
+      },
+      {
+        "face": "fg_keiko_smile",
+        "offer": true,
+        "line": "offer"
+      }
+    ],
+    "accepted": [
+      {
+        "face": "fg_keiko_smug",
+        "line": "accepted"
+      }
+    ],
+    "declined": [
+      {
+        "face": "fg_keiko_awkward",
+        "line": "declined"
+      }
+    ],
+    "go": [
+      {
+        "face": "fg_keiko_smile",
+        "line": "go"
+      }
+    ],
+    "options": {
+      "yes": "……任せる",
+      "no": "スマホ返して。自分で歩く"
+    }
+  },
+  "spots": {
+    "shop": {
+      "events": [
+        {
+          "kind": "notify",
+          "app": "message",
+          "thread": "riko",
+          "from": "理工 3 年（42）",
+          "text": "dm_riko_1",
+          "react": "react_riko_1"
+        }
+      ]
+    },
+    "camera": {
+      "events": [
+        {
+          "kind": "notify",
+          "app": "battery",
+          "text": "notify_battery",
+          "react": "react_battery"
+        }
+      ]
+    },
+    "weather": {
+      "events": [
+        {
+          "kind": "notify",
+          "app": "message",
+          "from": "母",
+          "text": "dm_mom",
+          "react": "react_mom"
+        }
+      ]
+    },
+    "transit": {
+      "events": [
+        {
+          "kind": "notify",
+          "app": "message",
+          "thread": "riko",
+          "from": "理工 3 年（57）",
+          "text": "dm_riko_3",
+          "react": "react_riko_3"
+        }
+      ]
+    },
+    "diary": {
+      "cost": 3
+    },
+    "match": {
+      "cost": 3
+    },
+    "dev": {
+      "pull": "D"
+    }
+  },
+  "board_lines": {
+    "_doc": "盤の上の出来事（game/ekimade.ts の boardExtras・poke）。face_cells は壁紙の子の顔の上にある区画（下の 2 行）。followup は DM（42）を受けた次の 1 歩で、そのマスの覗き込みのあと盤に戻ってから届く DM（43）と反応（bounce_line 番目の窓で、顔の上ならケイコの駒が小さく跳ねる）。resemble は任せているとき顔の上から初めて出た歩（重なれば次の歩）。face_return は 2 回目以降に顔の上へ戻った歩で 1 回に 1 つ（送り待ちにしない。tease_seconds で消える。使い切ったら「…」だけ）。poke は暗いフォルダを押したときの一度だけの一言。どれも仮置き",
+    "face_cells": [
+      "message",
+      "shop",
+      "memo",
+      "dev",
+      "maps",
+      "f_dark",
+      "match",
+      "f_shop"
+    ],
+    "followup": {
+      "after": "dm_riko_1",
+      "notify": {
+        "kind": "notify",
+        "app": "message",
+        "thread": "riko",
+        "from": "理工 3 年（43）",
+        "text": "dm_riko_2",
+        "react": "react_riko_2"
+      },
+      "bounce_line": 1
+    },
+    "resemble": "resemble",
+    "face_return": "face_return",
+    "tease_seconds": 3,
+    "poke": {
+      "folder": "f_dark",
+      "line": "dark_folder"
+    }
+  },
+  "clock": {
+    "start": "22:40",
+    "step_minutes": 1,
+    "departure": "22:58",
+    "departed_mark": "（発車）"
+  },
+  "rules": {
+    "right": {
+      "text": "右には曲がらない（at_step 歩目以降で、進む向きから見た右が出口になっているマスに初めて立ったときに言う。言った瞬間にその縁に縄が見える）",
+      "intro": "rule_right_intro",
+      "why": "rule_right_why",
+      "at_step": 2,
+      "trigger": "right_exit"
+    },
+    "pull": {
+      "text": "ときどき袖を引く（引くときの一言は lines.pull）",
+      "intro": "",
+      "why": "",
+      "at_step": 3
+    },
+    "exit": {
+      "text": "乗換は緑の電車",
+      "intro": "rule_exit_intro",
+      "why": "rule_exit_why",
+      "at_step": 7
+    }
+  },
+  "arrive_lines": [
+    {
+      "until": 12,
+      "line": "arrive_early"
+    },
+    {
+      "until": 18,
+      "line": "arrive_ok"
+    },
+    {
+      "until": 999,
+      "line": "arrive_late"
+    }
+  ],
+  "lines": {
+    "_doc": "台詞（キー → 文字列か、会話窓ごとの配列）。話すのはケイコだけ。dm_*・notify_* は通知の本文。どの文も仮置き（2026-11-08 の採用版。間・秒は人が決める）。乗換（transit・transit2）は一言なし（着いたときの一言・約束の一言が続く）",
+    "intro_borrow": [
+      "ねえ、スマホ貸して",
+      "駅までの道、調べたげる"
+    ],
+    "intro_unlock": "ネガくんの、貸して。……ロック、外して？",
+    "intro_wallpaper": "……あ、壁紙",
+    "intro_ribbon": "リボン、水色なんだ",
+    "intro_hmm": "……ふーん",
+    "intro_goal": [
+      "……駅は、電車のアプリまでね",
+      "58 分の、乗れるといいね"
+    ],
+    "intro_memorize": "うん。道、わかった",
+    "offer": "じゃ、もう一回聞くね",
+    "accepted": "任された。……言ったからね？",
+    "declined": [
+      "はい、返す。……つまんないの",
+      "じゃあ、隣で見てるね。画面も"
+    ],
+    "go": "行こっか",
+    "rule_right_intro": "ねえ。右には、曲がらないでね",
+    "rule_right_why": "右はなし。……理由？ ないよ",
+    "pull": "ねえ、下の。……ちょっと気になる",
+    "rule_exit_intro": [
+      "のりかえは、緑の電車のほうね",
+      "紫は……今日の気分じゃない"
+    ],
+    "rule_exit_why": [
+      "あ、紫。……右なしだと、こっち来ちゃうか",
+      "右なし、緑だけ。……決めたの、私か"
+    ],
+    "open_news": [
+      "④、いまやってるね",
+      "……送られてるの、君だけど"
+    ],
+    "open_sns": [
+      "保存まで、してるんだ",
+      "30 億あったら、終電とか気にしないもんね"
+    ],
+    "open_book": [
+      "予習してた？",
+      "……で、セーフワード、決めた？"
+    ],
+    "open_diary": [
+      "鍵だ。パスワード、私の誕生日とか？",
+      "……知らないか、そもそも"
+    ],
+    "open_match": [
+      "趣味、空欄じゃん",
+      "引いたらついてくるし……『言いなり』って書いとく？"
+    ],
+    "open_video": "3 回も？ ……あの部屋、思い出した？",
+    "dm_riko_1": "ネガ今日来ねーの？ 研究室で桃鉄やってる",
+    "react_riko_1": "桃鉄だって。……『女の子と歩いてる』って返す？",
+    "dm_riko_3": "既読ついてんの見えてるぞ",
+    "react_riko_3": "返してあげなよ。……私が打とっか",
+    "dm_mom": "今日も遅いの？ ごはんラップしとくね",
+    "react_mom": [
+      "……ママ？ やさしいじゃん",
+      "……既読つけたね。返事は？"
+    ],
+    "notify_battery": "バッテリー残量が 20% です",
+    "react_battery": [
+      "20%。……私のはもう死んでるよ"
+    ],
+    "withdrawn": "いいよ。……自分で選んだつもりでね",
+    "withdrawn_escaped": "あ、逃げた",
+    "reentrusted": "おかえり。……やっぱり任せたいんだ",
+    "arrive_early": "早っ。……そんなに帰りたかった？",
+    "arrive_ok": "まだ間に合うじゃん。……ちぇっ",
+    "arrive_late": "あ、58 分の……行っちゃった",
+    "end_entrusted": [
+      "任せたの、君だよ？",
+      "……次のまで、もうちょっと言いなりね♡"
+    ],
+    "end_withdrew": "途中、勝手に歩いたでしょ。……覚えとくね",
+    "end_declined": "一人で帰れたね。……えらーい",
+    "stopped": "ストップ、今日はちゃんと言えたね",
+    "open_weather": "地点、家だけ。……帰る気まんまんじゃん",
+    "open_dev": "むずかしそ。……それより",
+    "open_shop": "3 週間。……もう買わないやつじゃん",
+    "open_camera": "人、0。……私で 1 にする？",
+    "open_calendar": "今日、空白。……私、予定に入らないんだ",
+    "open_memo": "『会ったとき用』。……だれと？",
+    "open_music": "214 回。……次のカラオケ、それね",
+    "open_settings": "壁紙の変更、ここだ。……私にしとく？",
+    "open_message": "女の子、いないね。……あ、私も入ってないか",
+    "open_maps": "★、2 つ。……片方、あのカラオケじゃん",
+    "dm_riko_2": "で、例の女の子とはどうなったん？？",
+    "react_riko_2": [
+      "……例の、女の子？",
+      "壁紙の子？ ……それとも、私？"
+    ],
+    "resemble": [
+      "……ねえ。この子、ちょっと私に似てない？",
+      "……いつから壁紙？ これ"
+    ],
+    "face_return": [
+      "……また顔、踏んでる",
+      "この子も見てるよ",
+      "踏み慣れてきた？",
+      "……数えてるからね"
+    ],
+    "dark_folder": "その箱、目のとこ。……何、隠してるの？"
+  },
+  "look": {
+    "_doc": "見た目の値（仮置き。人が詰める）。絵は Pixi の 2D の重ね絵（web/src/effects/ekimade_stage.ts）、光の作りは docs/visual_language.md §5。長さは設計の 1080×1920 の px（盤の中はスマホの画面の px）。盤＝画面全体がスマホのホーム画面：wallpaper は壁紙（cover）、icon・left・col_pitch・top・row_pitch・phone_h は実機の iPhone 16 のホーム画面の位置と大きさ（1080/393 倍）、screen_top はスマホの画面の上端の設計の y（iPhone 16 では 1920 の上下に 210.5 ずつ見える）。card_radius・card_bezel は導入のスチルのスマホの角丸と枠。still_x・still_y・still_h はスチル（真ん中の x・上・高さ。スマホの比率のまま）、still_seconds はその出し入れ、still_keiko_dx はスチルの間に立ち絵を横へずらす px、board_in_seconds はスチルが画面いっぱいに広がって盤になる秒（暗転しない）。motes は立ちのぼる光の粒（加算）、motes_count・motes_scale・motes_speed_min・max（px/秒）・motes_alpha。folder_alpha・folder_pad・folder_gap はフォルダのすりガラスと中身。glow_color・glow_ring・glow_pulse_seconds はいまのアイコンの縁取り（glow_pulse_seconds が 0 なら明滅させず常に点ける）、next_color・next_ring・next_alpha・next_pulse_seconds は行ける隣の縁取り（どちらも暗い縁＋明るい線。明滅するのはここだけ）、next_fill_alpha はその白の塗り。refuse_shake・refuse_seconds・refuse_flash_seconds は隣でないアイコンを押したときの横の揺れ（px・秒）と、行ける隣の縁取りを強く光らせる秒。hint_* は導入で出発と乗換が光る秒・間・色・太さ。top_piece_w は真上から見た駒の幅（スマホの画面の px。二人で 1 つのアイコンに収まる）、top_piece_side は二人の横のずれ（アイコンの幅に対する割合）、top_piece_base_keiko・nega・alpha・radius は駒の足元の台座の円の色（ケイコは縄と同じ桃色、ネガは白）・不透明度・半径（駒の幅に対する倍）、piece_up_angle は絵の上を進む向きに合わせる角度（度）。hop_seconds・hop_height（跳ねたときに大きく見える割合）・hop_lag・pull_lag は跳ねる動き。trail_max・footprint_alpha・footprint_size は足跡（進む向きを指す山形）。rope_overhead は縄の絵、rope_length は境目の長さに対する倍、rope_width は太さ（スマホの画面の px）。dive_zoom・dive_zoom_seconds・dive_cross_seconds・dive_shaft_w・h は覗き込みに入る動き（寄り＋光の柱。1 秒以内）。back_out・hold・in_seconds は覗き込みから盤へ戻る暗転。覗き込みの舞台：backdrop は背景、icon_mask はアイコンの透明度、icon_rim は縁取り（1080×1920 の絵、layer_x・layer_y だけずらす）、face は区画の 4 隅、stage_scale・stage_center_y はアイコンを横幅の 7 割ほどに縮める倍率と真ん中、light_shaft・stage_shafts・stage_shaft_* は光の柱。piece_h・piece_depth・keiko_u・v・nega_u・v・shadow_* は舞台の v1 の駒、piece_faces は駒がもともと向いている側。intro_open_seconds は導入の会話が明ける秒、elevation はテスト用の見かけの仰角。think_seconds は「…」、notify_seconds は反応の無い通知が残る秒、surface_hold_seconds は台詞のない覗き込みで中身を見せる秒。clock_y・top_y・top_bottom は上の段（時刻の札はスマホの時刻の位置）、buttons_y・buttons_h は操作の帯（44pt 以上）、message_y・message_h はこの章の会話窓（6 行目のアイコンを隠さないよう低く・小さく）、choice_area は選択肢の枠（x y 幅 高さ）、detour_rise・detour_fade_delay は駒の上に出す「+3」の上がる px と薄れ始めの秒、detour_hold_seconds は時刻が足された歩で覗き込みの前に待つ秒",
+    "wallpaper": "eki_wallpaper_v4",
+    "icon": 176,
+    "left": 80,
+    "col_pitch": 247,
+    "top": 198,
+    "row_pitch": 275,
+    "phone_h": 2341,
+    "screen_top": -210.5,
+    "card_radius": 150,
+    "card_bezel": 26,
+    "still_x": 760,
+    "still_y": 210,
+    "still_h": 1300,
+    "still_seconds": 0.35,
+    "still_keiko_dx": -230,
+    "board_in_seconds": 1.1,
+    "motes": "eki_light_motes",
+    "motes_count": 3,
+    "motes_scale": 0.7,
+    "motes_speed_min": 14,
+    "motes_speed_max": 34,
+    "motes_alpha": 0.6,
+    "folder_alpha": 0.32,
+    "folder_pad": 0.13,
+    "folder_gap": 0.08,
+    "glow_color": "#9ff3ff",
+    "glow_ring": 10,
+    "glow_pulse_seconds": 0,
+    "next_color": "#ffffff",
+    "next_ring": 7,
+    "next_alpha": 0.9,
+    "next_fill_alpha": 0.15,
+    "refuse_shake": 6,
+    "refuse_seconds": 0.2,
+    "refuse_flash_seconds": 0.3,
+    "next_pulse_seconds": 0.9,
+    "hint_seconds": 0.8,
+    "hint_gap": 0.2,
+    "hint_color": "#8fe6ff",
+    "hint_ring": 12,
+    "top_piece_w": 100,
+    "top_piece_side": 0.26,
+    "top_piece_base_keiko": "#ff5f8f",
+    "top_piece_base_nega": "#ffffff",
+    "top_piece_base_alpha": 0.85,
+    "top_piece_base_radius": 0.55,
+    "top_piece_turn_seconds": 0.15,
+    "piece_up_angle": 0,
+    "hop_seconds": 0.3,
+    "hop_height": 0.25,
+    "hop_lag": 0.06,
+    "pull_lag": 0.2,
+    "trail_max": 10,
+    "footprint_alpha": 0.55,
+    "footprint_size": 15,
+    "rope_overhead": "eki_rope_overhead",
+    "rope_length": 1,
+    "rope_width": 170,
+    "dive_zoom": 3.2,
+    "dive_zoom_seconds": 0.5,
+    "dive_cross_seconds": 0.35,
+    "dive_shaft_w": 240,
+    "dive_shaft_h": 1400,
+    "back_out_seconds": 0.2,
+    "back_hold_seconds": 0.1,
+    "back_in_seconds": 0.35,
+    "backdrop": "eki_aero_backdrop",
+    "icon_mask": "eki_icon_mask_flat",
+    "icon_rim": "eki_icon_rim",
+    "light_shaft": "eki_light_shaft",
+    "stage_scale": 0.78,
+    "stage_center_y": 1055,
+    "stage_shafts": "0.3 0.45 0.55 0.65 0.75 0.4",
+    "stage_shaft_w": 110,
+    "stage_shaft_h": 780,
+    "stage_shaft_min": 0.18,
+    "stage_shaft_max": 0.5,
+    "layer_x": 0,
+    "layer_y": -40,
+    "face": "160 1000 920 1000 1010 1190 70 1190",
+    "piece_h": 0.18,
+    "piece_depth": 1,
+    "keiko_u": 0.3,
+    "keiko_v": 0.3,
+    "nega_u": 0.66,
+    "nega_v": 0.62,
+    "piece_faces": "L",
+    "shadow_alpha": 0.35,
+    "shadow_dx": 8,
+    "intro_open_seconds": 0.6,
+    "elevation": 10,
+    "think_seconds": 0.9,
+    "notify_seconds": 4,
+    "surface_hold_seconds": 1.2,
+    "clock_y": -150,
+    "top_y": -40,
+    "top_bottom": 420,
+    "buttons_y": 1896,
+    "buttons_h": 121,
+    "message_y": 1552,
+    "message_h": 330,
+    "choice_area": "110 1540 860 330",
+    "detour_rise": 60,
+    "detour_hold_seconds": 0.5,
+    "detour_fade_delay": 0.6
+  },
+  "sound": {
+    "_doc": "tools/audio_prep/ekimade2/SOUND_TABLE.md のとおり（値は仮置き。誰も聞いていない）。層は同時に鳴らし、盤（overhead。手の中のスマホなので薄く）と覗き込み（stage。全部の層）で大きさを替える（-60 で無音）。ケイコの層は任せていて自分で決めていない間だけ。導入の間は鳴らさず（intro.ambience の夜の環境音だけ）、盤の光が灯ると同時に始める。自分で決めるときは次の小節の頭から 1 小節で、覗き込みの行き来は quick_seconds で替える。着いたら 1 小節で層を下げ、次の小節の頭から arrive。やめたら stop_seconds で下げる。SE の大きさは assets.json の volume_db。step_seconds は盤で跳ねる 1 歩を短く切る秒。dive_in・dive_out は覗き込みに入る・戻る（仮に se_eki2_room と se_eki2_phone_down）。unlock は導入でスマホのロックを外す音（仮に phone_up）",
+    "layers": {
+      "floor": "bgm_eki2_floor",
+      "grid": "bgm_eki2_grid",
+      "pulse": "bgm_eki2_pulse",
+      "keiko": "bgm_eki2_keiko"
+    },
+    "overhead_db": {
+      "floor": 0,
+      "grid": -10,
+      "pulse": -60
+    },
+    "stage_db": {
+      "floor": 0,
+      "grid": -3,
+      "pulse": -4
+    },
+    "keiko_overhead_db": -8,
+    "keiko_stage_db": 0,
+    "bar_seconds": 3.0,
+    "change_seconds": 3.0,
+    "quick_seconds": 0.4,
+    "stop_seconds": 2.5,
+    "arrive": "bgm_eki2_arrive",
+    "se": {
+      "step": "se_eki2_step",
+      "keiko_step": "se_eki2_step_keiko",
+      "keiko_step_delay": 0.2,
+      "room": "se_eki2_room",
+      "rope": "se_eki2_rope",
+      "pull": "se_eki2_pull",
+      "pull_cue": "se_eki2_pull_cue",
+      "awkward": "se_eki2_awkward",
+      "notify": "se_eki2_notify",
+      "phone_up": "se_eki2_phone_up",
+      "phone_down": "se_eki2_phone_down",
+      "late": "se_eki2_late",
+      "unfold": "se_eki2_unfold",
+      "unlock": "se_eki2_phone_up",
+      "step_seconds": 0.18,
+      "dive_in": "se_eki2_room",
+      "dive_out": "se_eki2_phone_down"
+    }
+  },
+  "folders": {
+    "f_game": {
+      "name": "ゲーム",
+      "icon": 0
+    },
+    "f_study": {
+      "name": "大学",
+      "icon": 1
+    },
+    "f_photo": {
+      "name": "写真",
+      "icon": 2
+    },
+    "f_shop": {
+      "name": "買い物",
+      "icon": 3
+    },
+    "f_tools": {
+      "name": "道具",
+      "icon": 4
+    },
+    "f_dark": {
+      "name": "？",
+      "icon": 5
+    }
+  },
+  "self_lines": {
+    "after_open": "withdrawn_escaped"
+  }
+}

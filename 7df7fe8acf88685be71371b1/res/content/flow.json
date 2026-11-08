@@ -1,0 +1,11 @@
+{
+  "player": "nega",
+  "stages": [
+    {"type": "comic", "id": "chapter_01_opening"},
+    {"type": "chapter", "id": "chapter_01"},
+    {"type": "comic", "id": "chapter_01_after"},
+    {"type": "minigame", "id": "ekimade"},
+    {"type": "comic", "id": "ekimade_after"},
+    {"type": "comic", "id": "finale"}
+  ]
+}

@@ -1,0 +1,47 @@
+{
+  "effects": [
+    { "id": "fx_fade_out_black", "type": "fade_out", "duration": 0.5, "color": "#000000", "hold": 0.35 },
+    { "id": "fx_fade_in_black", "type": "fade_in", "duration": 0.5, "color": "#000000" },
+    { "id": "fx_shake_small", "type": "shake", "duration": 0.25, "intensity": 10 },
+    { "id": "fx_shake_large", "type": "shake", "duration": 0.45, "intensity": 24 },
+    { "id": "fx_flash_white", "type": "flash", "duration": 0.3, "color": "#ffffff" },
+    { "id": "fx_bump", "type": "shake", "axis": "vertical", "duration": 0.3, "intensity": 8 },
+    { "id": "fx_fade_out_black_slow", "type": "fade_out", "duration": 1.2, "color": "#000000", "hold": 0.4 }
+  ],
+  "motions": [
+    { "id": "motion_keiko_tilt", "layer": "foreground", "loops": 1, "interpolate": true, "frames": [{"image": "fg_keiko_puzzled", "seconds": 0.22, "offset": [-16, 6]}, {"image": "fg_keiko_puzzled", "seconds": 0.25, "offset": [-18, 7]}] },
+    { "id": "motion_keiko_bob_smile", "layer": "foreground", "loops": 2, "interpolate": true, "frames": [{"image": "fg_keiko_smile", "seconds": 0.09, "offset": [0, -12]}, {"image": "fg_keiko_smile", "seconds": 0.11, "offset": [0, 0]}] },
+    { "id": "motion_keiko_bob_smug", "layer": "foreground", "loops": 2, "interpolate": true, "frames": [{"image": "fg_keiko_smug", "seconds": 0.08, "offset": [0, -8]}, {"image": "fg_keiko_smug", "seconds": 0.1, "offset": [0, 0]}] },
+    { "id": "motion_keiko_recoil", "layer": "foreground", "loops": 1, "interpolate": true, "frames": [{"image": "fg_keiko_awkward", "seconds": 0.12, "offset": [0, -22]}, {"image": "fg_keiko_awkward", "seconds": 0.3, "offset": [0, -26]}] },
+    { "id": "motion_keiko_droop", "layer": "foreground", "loops": 1, "interpolate": true, "frames": [{"image": "fg_keiko_sad", "seconds": 0.35, "offset": [0, 14]}, {"image": "fg_keiko_sad", "seconds": 0.15, "offset": [0, 16]}] }
+  ],
+  "lights": [
+    { "id": "light_room_explain", "darkness": 0.525, "center": [540, 600], "radius": 700, "softness": 0.95, "blur": 6, "bloom": 0.12, "tint": "@paper", "gain": 1.25, "duration": 2.6, "easing": "sine_in_out" },
+    { "id": "light_room_dim", "darkness": 0.62, "center": [540, 600], "radius": 700, "softness": 0.95, "blur": 6, "bloom": 0.12, "tint": "@paper", "gain": 1.0, "duration": 2.6, "easing": "sine_in_out" },
+    { "id": "light_punish_room", "darkness": 0.5, "center": [470, 760], "radius": 840, "softness": 0.95, "blur": 6, "bloom": 0.12, "tint": "@paper", "gain": 1.0, "duration": 0, "easing": "sine_in_out" },
+    { "id": "light_none", "darkness": 0.0, "radius": 0, "duration": 0 },
+    { "id": "light_blackout", "darkness": 1.0, "radius": 0, "duration": 0 },
+    { "id": "light_room_unlit", "darkness": 1.0, "center": [540, 600], "radius": 700, "softness": 0.95, "blur": 6, "bloom": 0.0, "tint": "@paper", "gain": 0.0, "duration": 0 },
+    { "id": "light_lowered", "darkness": 0.6, "center": [560, 900], "radius": 560, "softness": 0.9, "blur": 9, "bloom": 0.22, "tint": "@lamp", "gain": 1.1, "flicker": 0.005, "duration": 0.9, "easing": "cubic_in_out", "haze": 0.18, "haze_color": "@haze", "haze_width": 450 }
+  ],
+  "atmospheres": [
+    { "id": "atmo_none", "duration": 2.0 },
+    { "id": "atmo_none_quick", "duration": 0.18 },
+    { "id": "atmo_karaoke", "lift": 0.07, "shadow_color": "@dusk_mauve", "split": 0.3, "mute": 0.22, "ambient": 0.28, "ambient_color": "@emergency", "ambient_falloff": 1.8, "hum": 0.03, "emissive": 0.85, "halation": 0.35, "halation_radius": 30, "accent": 0.55, "accent_color": "@exit_glow", "accent_radius": 26, "grain": 0.035, "duration": 1.5 },
+    { "id": "atmo_karaoke_room", "base": "atmo_karaoke", "accent_center": [330, 516] }
+  ],
+  "cameras": [
+    { "id": "cam_stake_push", "offset": [0, 110], "zoom": 1.13, "duration": 1.4, "easing": "sine_in_out" },
+    { "id": "cam_settle_slow", "zoom": 1.08, "duration": 1.8, "easing": "sine_in_out" },
+    { "id": "cam_room_breathe", "zoom": 1.08, "duration": 3.0, "easing": "sine_in_out" },
+    { "id": "cam_reset", "duration": 0 },
+    { "id": "cam_neutral", "duration": 0.5, "easing": "sine_in_out" },
+    { "id": "cam_neutral_slow", "duration": 0.8, "easing": "sine_in_out" }
+  ],
+  "grades": [
+    { "id": "grade_normal", "saturation": 1.0, "tint": "#ffffff", "duration": 0 }
+  ],
+  "flashlights": [
+    { "id": "flash_white_weak", "ambient": 0.11, "ambient_color": [0.62, 0.7, 0.95], "ambient_saturation": 0.3, "outside_level": 0.55, "color": [1.0, 0.97, 0.92], "hotspot_radius": 240, "hotspot_intensity": 0.92, "spill_radius": 560, "spill_intensity": 0.256, "ring": 0.08, "shoulder": 0.7, "sway_pixels": 7, "sway_hz": 0.35, "lag": 0.12, "lag_max_pixels": 60, "follow_hz": 1.2, "follow_damping": 0.8, "max_turn_speed": 1000, "drag_gain_slow": 0.5, "drag_gain_fast": 0.75, "gain_speed": 1600, "glide_keep": 0.12, "sway_move_pixels": 10, "sway_move_speed": 1500, "steady_seconds": 0.6, "dust": 0.25, "grain": 0.05, "grain_rate": 24, "vignette": 0.35, "aberration": 1.5, "hand_offset": [0.14, 0.2, 0.0], "wrap": 0.35, "shadow_strength": 0.85, "shadow_bias": 0.035, "shadow_steps": 24 }
+  ]
+}

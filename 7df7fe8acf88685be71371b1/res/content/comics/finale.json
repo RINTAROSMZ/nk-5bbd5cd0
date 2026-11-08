@@ -1,0 +1,102 @@
+{
+  "id": "finale",
+  "directory": "res://res/comic/finale",
+  "panel_layout": {
+    "directory": "res://res/comic/finale/panels",
+    "layout_width": 1080, "source_page_width": 1240, "max_panel_width": 1000, "max_zoom": 1.6,
+    "gap": 90, "head_gap": 220, "tail_gap": 1500,
+    "paper": "@comic_paper",
+    "panels": [
+      {"id": "p1_01", "layered": true},
+      {"id": "p1_02", "layered": true, "gap": 120},
+      {"id": "p1_03", "layered": true, "gap": 120},
+      {"id": "p2_04", "layered": true, "gap": 300},
+      {"id": "p2_05", "layered": true, "gap": 90},
+      {"id": "p2_06", "layered": true, "gap": 160},
+      {"id": "p3_07", "layered": true, "gap": 300},
+      {"id": "p3_08", "layered": true, "gap": 60},
+      {"id": "p3_09", "layered": true, "gap": 120},
+      {"id": "p4_10", "layered": true, "gap": 360},
+      {"id": "p4_11", "layered": true, "gap": 90},
+      {"id": "p4_12", "gap": 90},
+      {"id": "p4_13", "layered": true, "gap": 120},
+      {"id": "p4_14", "gap": 260, "open_tile": {"image": "p4_14_tile", "at": [22, 22]}}
+    ]
+  },
+  "gate": {
+    "at_end": true,
+    "steps": [
+      {"type": "catch", "seconds": 0.6, "easing": "cubic_out"},
+      {"type": "wait", "seconds": 0.35},
+      {"type": "bgm", "audio": "", "seconds": 0.9},
+      {"type": "open_panel", "panel": "p4_14", "seconds": 0.55, "then_seconds": 0.4, "easing": "cubic_in_out", "darken": 1.0},
+      {"type": "wait", "seconds": 0.3}
+    ]
+  },
+  "rewrite": {
+    "panel": "p4_12",
+    "image": "comic_finale_p4_12_rewritten",
+    "trigger_panel": "p4_14",
+    "erosion_delay": 0.8,
+    "erosion_seconds": 1.6,
+    "erosion_grain": 0.05,
+    "erosion_grain_rate": 18,
+    "gate_hold_seconds": 1.5,
+    "back_hint": true,
+    "soot_seconds": 30,
+    "soot_power": 1.2,
+    "soot_pulse_seconds": [0, 4.5, 9, 13.5, 17.25, 20.25, 22.5, 24.75, 26.25, 27.75, 28.5, 29.25],
+    "soot_recede_seconds": 2.25,
+    "soot_pulse_se": "se_soot_pulse",
+    "soot_bgm": "bgm_finale_soot",
+    "released_bgm": "bgm_finale_released",
+    "released_cut_seconds": 0.2,
+    "ending_bgm_fade": 0.8,
+    "sway_reading_px": 1.5,
+    "sway_pressure_px": 6,
+    "cue_ghost": 0.55,
+    "cue_interval": [2.5, 5.0],
+    "cue_seconds": 2.2,
+    "peel_seconds": 2.2,
+    "prompt": "",
+    "choices": [
+      {"id": "accept_so", "text": "……そっか", "ending": "normal"},
+      {"id": "accept_good", "text": "なら、よかった", "ending": "normal"},
+      {"id": "pickup", "text": "おむかえ、行かなくていいの？", "ending": "true", "hidden": true}
+    ],
+    "stage": {
+      "background": "bg_karaoke_room", "background_tint": "#8c8c8c", "portrait": "fg_keiko_normal",
+      "choice_placement": "center", "fade_seconds": 0.8, "line_delay": 0.4,
+      "bgm": "bgm_finale_stage_lie", "bgm_found": "bgm_finale_stage_found", "bgm_fade": 2.0
+    },
+    "endings": [
+      {
+        "id": "normal",
+        "bgm": "bgm_finale_end_normal",
+        "grain": 1.4,
+        "retry_label": "もう一度読む",
+        "lines": [
+          {"speaker": "keiko", "text": "でしょ。一人なんかじゃないし", "portrait": "fg_keiko_smug"},
+          {"speaker": "keiko", "text": "このあと、友達とあそぶ約束あるから", "portrait": "fg_keiko_smile"},
+          {"speaker": "keiko", "text": "……じゃあね", "portrait": "fg_keiko_normal"}
+        ]
+      },
+      {
+        "id": "true",
+        "true_end": true,
+        "bgm": "bgm_finale_end_true",
+        "grain": 0,
+        "lines": [
+          {"speaker": "keiko", "text": "……なんで、それ", "portrait": "fg_keiko_puzzled"},
+          {"speaker": "keiko", "text": "……行かなきゃ。お姉ちゃんだし", "portrait": "fg_keiko_sad"},
+          {"speaker": "keiko", "text": "さっきまでのは、ちょっと休憩してただけ", "portrait": "fg_keiko_awkward"},
+          {"speaker": "keiko", "text": "ここでは、お姉ちゃんじゃなくてよかったから", "portrait": "fg_keiko_smile"},
+          {"speaker": "player", "text": "……いってらっしゃい"}
+        ]
+      }
+    ],
+    "end_text": "おしまい",
+    "end_label": "タイトルへ",
+    "end_fade_seconds": 1.2
+  }
+}

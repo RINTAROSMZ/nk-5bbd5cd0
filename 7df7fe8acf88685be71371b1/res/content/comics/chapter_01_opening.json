@@ -1,0 +1,31 @@
+{
+  "id": "chapter_01_opening",
+  "directory": "res://res/comic/chapter_01",
+  "panel_layout": {
+    "directory": "res://res/comic/chapter_01/panels",
+    "layout_width": 1080, "source_page_width": 1240, "max_panel_width": 1000, "max_zoom": 1.6,
+    "gap": 90, "head_gap": 220, "tail_gap": 1100,
+    "paper": "@comic_paper",
+    "panels": [
+      {"id": "p1_01"},
+      {"id": "p1_02", "gap": 280},
+      {"id": "p1_03", "gap": 80},
+      {"id": "p1_04", "gap": 220},
+      {"id": "p1_05", "gap": 90},
+      {"id": "p1_06", "gap": 40},
+      {"id": "p2_07", "gap": 300},
+      {"id": "p2_08", "gap": 60},
+      {"id": "p2_09", "gap": 90},
+      {"id": "p2_10_gate", "gap": 280, "open_tile": {"image": "p2_10_gate_tile", "at": [429, 17]}}
+    ]
+  },
+  "gate": {
+    "at_end": true,
+    "steps": [
+      {"type": "catch", "seconds": 0.6, "easing": "cubic_out"},
+      {"type": "wait", "seconds": 0.35},
+      {"type": "open_panel", "panel": "p2_10_gate", "seconds": 0.55, "then_seconds": 0.4, "easing": "cubic_in_out", "darken": 1.0},
+      {"type": "wait", "seconds": 0.3}
+    ]
+  }
+}

@@ -1,0 +1,617 @@
+{
+  "id": "chapter_01",
+  "title": "第1話　ゲーム",
+  "start": "conversation_open",
+  "scoring": {
+    "minimum_total": 0,
+    "ranks": [
+      {"min_score": 750, "label": "S"},
+      {"min_score": 500, "label": "A"},
+      {"min_score": 300, "label": "B"},
+      {"min_score": 0, "label": "C"}
+    ],
+    "verdicts": [
+      {"code": "MSKN", "title": "むっつり観察家", "text": "部屋の隅まで見るのに、肝心なものは見ないふりをする。"},
+      {"code": "IWKS", "title": "言い訳職人", "text": "逃げ道を探すときだけ、目が輝いている。"},
+      {"code": "KTWN", "title": "断れない人", "text": "我慢強いのではなく、断るのが苦手なだけ。"},
+      {"code": "TYRI", "title": "ちょろい人", "text": "「ごほうび」の一言で、だいたいついてくる。"},
+      {"code": "KYHN", "title": "共犯者", "text": "嫌だと言いながら、最後まで付き合ってくれる。"},
+      {"code": "ERBS", "title": "選ばされ上手", "text": "自分で選んだつもりで、ちゃんと選ばされている。"},
+      {"code": "KRGR", "title": "暗がり好き", "text": "明かりが弱いほど、なぜか楽しそう。"},
+      {"code": "SRNN", "title": "正論で逃げる人", "text": "正しいことを言ったあと、少しだけ寂しそう。"}
+    ],
+    "traits": [
+      {"label": "M適性", "comments": {"A": "叩かれて「痛い」より先に「ありがとう」が出る人。", "B": "口では嫌がる。目はそうでもない。", "C": "素質はある。気づいていないのは本人だけ。", "D": "痛いのは嫌。でも構われるのは好き。一番めんどくさい。", "E": "一回叩かれたら三日は根に持つ。"}},
+      {"label": "S適性", "comments": {"A": "優しい顔で一番えげつないことをするタイプ。", "B": "命令口調だけ妙に板についている。", "C": "責める側に回った途端、急に饒舌になる。", "D": "叩く前に「大丈夫？」と聞いてしまう。", "E": "どう見ても謝る側の顔をしている。"}},
+      {"label": "我慢強さ", "comments": {"A": "歯医者で一度も手を挙げたことがない人の顔。", "B": "限界の手前で、なぜか一番落ち着く。", "C": "我慢はできる。ただし顔に全部出る。", "D": "三秒で「ちょっと待って」と言う。", "E": "注射の前から涙目になっている。"}},
+      {"label": "言い訳力", "comments": {"A": "正論で逃げ切ったあと、少しだけ寂しそう。", "B": "屁理屈のキレだけは一流。", "C": "言い訳を考えているうちに全部終わっている。", "D": "「いや」から先が一度も続いたことがない。", "E": "言い訳より先に謝る。それもそれで怪しい。"}},
+      {"label": "むっつり度", "comments": {"A": "部屋の隅まで見るのに、肝心なものは見ないふり。", "B": "何も言わないが、全部覚えている。", "C": "平静を装うのが、少しだけ下手。", "D": "全部顔に出るので、むっつりになれない。", "E": "本当に何も考えていない。逆に怖い。"}}
+    ]
+  },
+  "sequences": [
+    {
+      "id": "conversation_open",
+      "type": "conversation",
+      "events": [
+        {"type": "ui", "visible": false},
+        {"type": "light", "light": "light_room_unlit"},
+        {"type": "background", "image": "bg_karaoke_room", "cut": true},
+        {"type": "foreground", "image": "fg_keiko_normal", "cut": true},
+        {"type": "ambience", "audio": "amb_room_hum", "fade_in": 2.0},
+        {"type": "wait", "seconds": 0.6},
+        {"type": "ui", "visible": true},
+        {"type": "line", "speaker": "nega", "text": "そ、そんなに急に近付かないでよ……！", "size": 1.15, "shake": 1.0, "speed": 1.25},
+        {"type": "atmosphere", "atmosphere": "atmo_karaoke_room"},
+        {"type": "light", "light": "light_room_explain"},
+        {"type": "bgm", "audio": "bgm_ch1_open", "fade_in": 3.0},
+        {"type": "camera", "camera": "cam_room_breathe"},
+        {"type": "wait", "seconds": 1.2},
+        {"type": "foreground", "image": "fg_keiko_sad"},
+        {"type": "motion", "motion": "motion_keiko_droop"},
+        {"type": "line", "speaker": "keiko", "text": "なぁに、嫌なの……。", "speed": 0.85, "tail": {"chars": 3, "size": 0.85, "alpha": 0.5}, "hold": 0.2},
+        {"type": "foreground", "image": "fg_keiko_smug", "cut": true},
+        {"type": "motion", "motion": "motion_keiko_bob_smug"},
+        {"type": "line", "speaker": "keiko", "text": "こんな美女が目の前にいて嫌がるなんて。"},
+        {"type": "foreground", "image": "fg_keiko_smile", "cut": true, "sting": true},
+        {"type": "motion", "motion": "motion_keiko_bob_smile"},
+        {"type": "line", "speaker": "keiko", "segments": [{"text": "根性なしだ、", "pause": 0.2}, {"text": "根性なし男！", "speed": 1.2}]},
+        {"type": "foreground", "image": "fg_keiko_puzzled"},
+        {"type": "motion", "motion": "motion_keiko_tilt"},
+        {"type": "line", "speaker": "nega", "segments": [{"text": "根性なし、って……", "pause": 0.25}, {"text": "別に俺はそういう訳じゃ、受験とかも努力で乗り切ってきたし……。", "speed": 1.35}], "tail": {"chars": 14, "size": 0.8, "alpha": 0.4}},
+        {"type": "wait", "seconds": 0.2},
+        {"type": "foreground", "image": "fg_keiko_smile", "cut": true},
+        {"type": "se", "audio": "se_cloth"},
+        {"type": "line", "speaker": "keiko", "segments": [{"text": "じゃあひとつゲームしよ、", "pause": 0.3}, {"text": "あんたが根性あるとこ見せて？"}]},
+        {"type": "foreground", "image": "fg_keiko_normal"},
+        {"type": "line", "speaker": "nega", "text": "こんな非常事態に、ゲーム……？", "speed": 1.1},
+        {"type": "wait", "seconds": 0.15},
+        {"type": "foreground", "image": "fg_keiko_smile", "cut": true},
+        {"type": "bgm_stop", "fade": 0.3},
+        {"type": "bgm", "audio": "bgm_ch1_explain"},
+        {"type": "line", "speaker": "keiko", "segments": [{"text": "この部屋の中から、"}, {"text": "脱出に使えそうなもの", "shake": 1.6, "speed": 0.8}, {"text": "探すの。"}]},
+        {"type": "motion", "motion": "motion_keiko_bob_smile"},
+        {"type": "line", "speaker": "keiko", "text": "見つけたものは、しっかり持っててね。"},
+        {"type": "foreground", "image": "fg_keiko_smug", "sting": true},
+        {"type": "camera", "camera": "cam_stake_push"},
+        {"type": "line", "speaker": "keiko", "segments": [{"text": "うっかり大事なアイテム見逃したら、", "pause": 0.35}, {"text": "きっとあとで"}, {"text": "大変なこと", "speed": 0.7}, {"text": "になっちゃうよ。"}], "pause_before": 0.4, "hold": 0.6},
+        {"type": "camera", "camera": "cam_settle_slow"},
+        {"type": "foreground", "image": "fg_keiko_normal"}
+      ],
+      "next": "choice_offer"
+    },
+    {
+      "id": "choice_offer",
+      "type": "choice",
+      "speaker": "nega",
+      "echo": false,
+      "options": [
+        {"id": "refuse_harsh", "text": "は？こんな時に何言ってるの", "next": "conversation_refuse_harsh"},
+        {"id": "refuse_plain", "text": "やるわけないじゃん", "next": "conversation_refuse_plain"}
+      ]
+    },
+    {
+      "id": "conversation_refuse_plain",
+      "type": "conversation",
+      "events": [
+        {"type": "line", "speaker": "nega", "text": "やるわけないじゃん"},
+        {"type": "foreground", "image": "fg_keiko_awkward", "cut": true, "sting": true},
+        {"type": "line", "speaker": "keiko", "text": "……", "hold": 0.8},
+        {"type": "foreground", "image": "fg_keiko_smile", "cut": true},
+        {"type": "line", "speaker": "keiko", "text": "ネガくん、声小さいからかな", "pause_before": 0.2},
+        {"type": "motion", "motion": "motion_keiko_bob_smile"},
+        {"type": "line", "speaker": "keiko", "text": "聞こえないよ？"},
+        {"type": "foreground", "image": "fg_keiko_normal"},
+        {"type": "line", "speaker": "keiko", "text": "もう一回聞くね。", "speed": 0.9}
+      ],
+      "next": "choice_offer_again"
+    },
+    {
+      "id": "conversation_refuse_harsh",
+      "type": "conversation",
+      "events": [
+        {"type": "line", "speaker": "nega", "text": "は？こんな時に何言ってるの"},
+        {"type": "foreground", "image": "fg_keiko_awkward", "cut": true},
+        {"type": "motion", "motion": "motion_keiko_recoil"},
+        {"type": "line", "speaker": "keiko", "text": "……", "hold": 0.8},
+        {"type": "foreground", "image": "fg_keiko_sad", "sting": true},
+        {"type": "line", "speaker": "keiko", "text": "そんな言い方、しなくても……", "speed": 0.85, "tail": {"chars": 4, "size": 0.85, "alpha": 0.45}},
+        {"type": "line", "speaker": "nega", "text": "ごめんっ！そんなつもりじゃ……", "speed": 1.4, "auto_advance": 0.05},
+        {"type": "foreground", "image": "fg_keiko_smile", "cut": true},
+        {"type": "line", "speaker": "keiko", "text": "もう一回聞くね。", "speed": 1.3}
+      ],
+      "next": "choice_offer_again"
+    },
+    {
+      "id": "choice_offer_again",
+      "type": "choice",
+      "speaker": "nega",
+      "echo": false,
+      "hold": true,
+      "options": [
+        {"id": "refuse_harsh", "text": "は？こんな時に何言ってるの", "next": "conversation_snatch"},
+        {"id": "refuse_plain", "text": "やるわけないじゃん", "next": "conversation_snatch"}
+      ]
+    },
+    {
+      "id": "conversation_snatch",
+      "type": "conversation",
+      "events": [
+        {"type": "foreground", "image": "fg_keiko_normal"},
+        {"type": "line", "speaker": "keiko", "text": "そうだ", "pause_before": 0.5, "hold": 0.3},
+        {"type": "foreground", "image": "fg_keiko_smug", "cut": true},
+        {"type": "line", "speaker": "keiko", "text": "こんな選択肢、イラナイでしょ？"},
+        {"type": "choice_snatch", "image": "ui_keiko_hand", "option": "refuse_harsh", "seconds": 1.6},
+        {"type": "choice_snatch", "image": "ui_keiko_hand", "option": "refuse_plain", "seconds": 1.4},
+        {"type": "wait", "seconds": 0.3},
+        {"type": "foreground", "image": "fg_keiko_smile", "cut": true},
+        {"type": "motion", "motion": "motion_keiko_bob_smile"},
+        {"type": "line", "speaker": "keiko", "segments": [{"text": "そんな不安そうな顔しないで、", "pause": 0.3}, {"text": "上手にできたら"}, {"text": "ご褒美", "shake": 1.6}, {"text": "待ってるから"}], "speed": 0.95}
+      ],
+      "next": "choice_accept"
+    },
+    {
+      "id": "choice_accept",
+      "type": "choice",
+      "speaker": "nega",
+      "echo": false,
+      "options": [
+        {"id": "accept", "text": "やります", "next": "conversation_start"}
+      ]
+    },
+    {
+      "id": "conversation_start",
+      "type": "conversation",
+      "events": [
+        {"type": "bgm_stop", "fade": 0.15},
+        {"type": "se", "audio": "se_praise_sting"},
+        {"type": "foreground", "image": "fg_keiko_smile", "cut": true, "sting": false},
+        {"type": "motion", "motion": "motion_keiko_bob_smile"},
+        {"type": "line", "speaker": "keiko", "text": "そうっ！君はすごいっ！才能がある！", "speed_curve": [[0, 1.0], [0.5, 1.5], [1, 1.8]]},
+        {"type": "line", "speaker": "nega", "text": "（才能……？）", "style": "thought"},
+        {"type": "foreground", "image": "fg_keiko_smug"},
+        {"type": "line", "speaker": "keiko", "text": "じゃあ、スタートね", "pause_before": 0.3, "hold": 0.4},
+        {"type": "ui", "visible": false},
+        {"type": "se", "audio": "se_light_on"},
+        {"type": "bgm", "audio": "bgm_ch1_explore"},
+        {"type": "light", "light": "light_room_dim"}
+      ],
+      "next": "exploration_room"
+    },
+    {
+      "id": "exploration_room",
+      "type": "exploration",
+      "background": "bg_karaoke_explore",
+      "view_fraction": 0.4,
+      "max_zoom": 2.5,
+      "start_focus": [1024, 1200],
+      "time_limit": 60,
+      "clock_rate": 1.2,
+      "warning_seconds": 10,
+      "bgm_hurry": [
+        {"at": 20, "rate": 1.06, "seconds": 1.0},
+        {"at": 10, "rate": 1.12, "seconds": 0.6}
+      ],
+      "flashlight": "flash_white_weak",
+      "hint": "ドラッグで見回す・2本指で近づく\nタップで調べる",
+      "hint_seconds": 2.4,
+      "points_per_item": 100,
+      "time_bonus_per_second": 5,
+      "found_se": "se_confirm_low",
+      "tick_se": "se_type_tick",
+      "end_se": "se_power_down",
+      "items": [
+        {"id": "menu_stand", "name": "メニュー立て", "rect": [496, 1336, 264, 464], "object": "obj_menu_stand", "icon": "icon_menu_stand", "speaker": "keiko", "face": "face_keiko_smug", "comment": "メニュー立て。角、けっこう硬いよね。"},
+        {"id": "glass", "name": "グラス", "rect": [1016, 1688, 160, 216], "object": "obj_glass", "icon": "icon_glass", "speaker": "keiko", "face": "face_keiko_normal", "comment": "グラス。氷、まだ溶けてないね。"},
+        {"id": "mic", "name": "マイク", "rect": [1632, 1648, 168, 224], "object": "obj_mic", "icon": "icon_mic", "speaker": "keiko", "face": "face_keiko_smile", "comment": "マイクかぁ。声、大きいほうがいいもんね？"},
+        {"id": "denmoku", "name": "デンモク", "rect": [336, 1136, 248, 232], "object": "obj_denmoku", "icon": "icon_denmoku", "speaker": "keiko", "face": "face_keiko_smile", "comment": "デンモク。けっこう、ずっしりしてるね。"},
+        {"id": "hanger", "name": "ハンガー", "rect": [1136, 416, 328, 216], "object": "obj_hanger", "icon": "icon_hanger", "speaker": "keiko", "face": "face_keiko_smug", "comment": "ハンガー。手首くらいなら、かけられそう。"}
+      ],
+      "remarks": {"speaker": "keiko", "slots": [{"at": 10, "hint_when_found_below": 2}, {"at": 30, "hint_when_found_below": 3}, {"at": 50, "finale": true}], "cheer_when_found_at_least": 3, "hints": {"menu_stand": {"text": "テーブルの端っこ、棚のそば。あやしくない？", "face": "face_keiko_normal"}, "glass": {"text": "テーブルのまんなか、ちゃんと見た？", "face": "face_keiko_smug"}, "mic": {"text": "ソファのほうのテーブル。あやしくない？", "face": "face_keiko_smile"}, "denmoku": {"text": "テレビの下の棚、あやしくない？", "face": "face_keiko_smug"}, "hanger": {"text": "壁のほう、なにか引っかからない？", "face": "face_keiko_smile"}}, "chatter": [{"text": "停電って、いつ直るんだろ", "face": "face_keiko_normal"}, {"text": "私がいま嘘ついてる可能性もあるよ？", "face": "face_keiko_smug"}, {"text": "暗いとさ、声って近くに聞こえない？", "face": "face_keiko_smug"}, {"text": "あんたもこんな感じで暗いよね", "face": "face_keiko_smile"}], "rebuff": [{"text": "仏様だって、いつも救ってくれるわけじゃないよ", "face": "face_keiko_smug"}, {"text": "次は自分で見つけなよ。実践でしょ？", "face": "face_keiko_smug"}, {"text": "ヒントで拾ったのはノーカンでいい？", "face": "face_keiko_smile"}], "cheer": [{"text": "がんばれ♡ がんばれ♡", "face": "face_keiko_smile"}], "mock": [{"text": "必死だね。かわいい", "face": "face_keiko_smile"}, {"text": "焦ってる？童貞くん", "face": "face_keiko_smug"}]},
+      "next": "conversation_after_search",
+      "scene3d": {"depth": "depth_karaoke_explore", "normal": "normal_karaoke_explore", "focal": 1773.62, "max_depth": 8.0, "item_order": ["menu_stand", "glass", "mic", "denmoku", "hanger"], "item_depths": {"menu_stand": 1.265, "glass": 1.114, "mic": 1.296, "denmoku": 2.2, "hanger": 3.15}}
+    },
+    {
+      "id": "conversation_after_search",
+      "type": "conversation",
+      "events": [
+        {"type": "bgm_stop", "fade": 0.6},
+        {"type": "ui", "visible": true},
+        {"type": "foreground", "image": "fg_keiko_smile"},
+        {"type": "line", "speaker": "keiko", "text": "終わりっ"},
+        {"type": "line", "speaker": "keiko", "text": "すごいじゃん！"},
+        {"type": "foreground", "image": "fg_keiko_smug", "sting": true},
+        {"type": "bgm", "audio": "bgm_ch1_reward", "fade_in": 2.5},
+        {"type": "line", "speaker": "keiko", "segments": [{"text": "じゃあ、ちょっと"}, {"text": "ごほうび", "shake": 1.6}, {"text": "あげちゃおうかなー"}]}
+      ],
+      "next": "punish_intro"
+    },
+    {
+      "id": "punish_intro",
+      "type": "conversation",
+      "events": [
+        {"type": "effect", "effect": "fx_fade_out_black"},
+        {"type": "ui", "visible": false},
+        {"type": "camera", "camera": "cam_neutral"},
+        {"type": "background", "image": "bg_karaoke_room", "cut": true},
+        {"type": "foreground", "image": "fg_spank_bare", "cut": true},
+        {"type": "light", "light": "light_punish_room"},
+        {"type": "se", "audio": "se_cloth"},
+        {"type": "effect", "effect": "fx_fade_in_black"},
+        {"type": "ui", "visible": true},
+        {"type": "line", "speaker": "nega", "text": "ちょ、待って、なんで膝の上……", "speed": 1.3, "shake": 0.6},
+        {"type": "line", "speaker": "keiko", "text": "ごほうびって、言ったでしょ？"},
+        {"type": "line", "speaker": "keiko", "segments": [{"text": "大事なアイテム見逃したら、", "pause": 0.3}, {"text": "大変なことになるって言ったよね？"}]},
+        {"type": "composure", "value": 100},
+        {"type": "line", "speaker": "keiko", "text": "耐え抜くか、言い逃れするか。選ばせてあげる", "hold": 0.3}
+      ],
+      "branches": [
+        {"flag": "exploration_room_all_found", "equals": true, "next": "punish_bare"}
+      ],
+      "next": "punish_route_hanger"
+    },
+    {
+      "id": "punish_route_hanger",
+      "type": "conversation",
+      "events": [],
+      "branches": [
+        {"flag": "found_hanger", "equals": false, "next": "punish_hanger"}
+      ],
+      "next": "punish_route_glass"
+    },
+    {
+      "id": "punish_route_glass",
+      "type": "conversation",
+      "events": [],
+      "branches": [
+        {"flag": "found_glass", "equals": false, "next": "punish_glass"}
+      ],
+      "next": "punish_route_denmoku"
+    },
+    {
+      "id": "punish_route_denmoku",
+      "type": "conversation",
+      "events": [],
+      "branches": [
+        {"flag": "found_denmoku", "equals": false, "next": "punish_denmoku"}
+      ],
+      "next": "punish_route_menu_stand"
+    },
+    {
+      "id": "punish_route_menu_stand",
+      "type": "conversation",
+      "events": [],
+      "branches": [
+        {"flag": "found_menu_stand", "equals": false, "next": "punish_menu_stand"}
+      ],
+      "next": "punish_route_mic"
+    },
+    {
+      "id": "punish_route_mic",
+      "type": "conversation",
+      "events": [],
+      "branches": [
+        {"flag": "found_mic", "equals": false, "next": "punish_mic"}
+      ],
+      "next": "punish_end"
+    },
+    {
+      "id": "punish_hanger",
+      "type": "conversation",
+      "events": [
+        {"type": "foreground", "image": "fg_spank_hanger"},
+        {"type": "scene_title", "text": "【使用道具】ハンガー"},
+        {"type": "se", "audio": "se_cloth"},
+        {"type": "line", "speaker": "keiko", "text": "まずは、ハンガー"},
+        {"type": "foreground", "image": "fg_spank_hanger_ready", "cut": true},
+        {"type": "line", "speaker": "keiko", "text": "これで、叩いてあげよっか？"}
+      ],
+      "next": "punish_hanger_choice"
+    },
+    {
+      "id": "punish_hanger_choice",
+      "type": "choice",
+      "speaker": "nega",
+      "placement": "low",
+      "options": [
+        {"id": "hanger_accept", "text": "……一回だけなら", "next": "punish_hanger_accept"},
+        {"id": "hanger_reason", "text": "服をかけるやつだろ", "next": "punish_hanger_accept"}
+      ],
+      "snatch": [
+        {"option": "hanger_reason", "delay": 0.7, "image": "ui_keiko_hand", "seconds": 1.6}
+      ]
+    },
+    {
+      "id": "punish_hanger_accept",
+      "type": "conversation",
+      "events": [
+        {"type": "line", "speaker": "keiko", "text": "素直じゃん"},
+        {"type": "foreground", "image": "fg_spank_hanger_raise", "cut": true},
+        {"type": "se", "audio": "se_awaken"},
+        {"type": "still", "image": "cg_spank_hanger"},
+        {"type": "effect", "effect": "fx_shake_large"},
+        {"type": "score", "reason": "endured", "points": 100, "composure": -25},
+        {"type": "line", "speaker": "nega", "text": "っ……！", "size": 1.1, "shake": 1.0},
+        {"type": "line", "speaker": "keiko", "text": "ハンガーって、実際のSMでも使うんだよ？"}
+      ],
+      "next": "punish_route_glass"
+    },
+    {
+      "id": "punish_glass",
+      "type": "conversation",
+      "events": [
+        {"type": "foreground", "image": "fg_spank_glass"},
+        {"type": "scene_title", "text": "【使用道具】グラス"},
+        {"type": "line", "speaker": "keiko", "text": "次は、グラス"},
+        {"type": "foreground", "image": "fg_spank_glass_ready", "cut": true},
+        {"type": "line", "speaker": "keiko", "text": "頭からかけてあげよっか？"}
+      ],
+      "next": "punish_glass_choice"
+    },
+    {
+      "id": "punish_glass_choice",
+      "type": "choice",
+      "speaker": "nega",
+      "placement": "low",
+      "options": [
+        {"id": "glass_accept", "text": "……どうぞ", "next": "punish_glass_accept"},
+        {"id": "glass_leak", "text": "床が水びたしになるぞ", "next": "punish_glass_leak"}
+      ]
+    },
+    {
+      "id": "punish_glass_accept",
+      "type": "conversation",
+      "events": [
+        {"type": "foreground", "image": "fg_spank_glass_raise", "cut": true},
+        {"type": "line", "speaker": "keiko", "segments": [{"text": "アイスプレイって、", "pause": 0.25}, {"text": "ほんとはもっと、じわじわやるんだよ？"}]},
+        {"type": "wait", "seconds": 0.4},
+        {"type": "line", "speaker": "keiko", "text": "今日は、首すじにちょっとだけ", "tail": {"chars": 2, "size": 0.85, "alpha": 0.6}},
+        {"type": "foreground", "image": "fg_spank_glass", "cut": true},
+        {"type": "still", "image": "cg_spank_glass"},
+        {"type": "score", "reason": "endured", "points": 80, "composure": 0},
+        {"type": "line", "speaker": "nega", "text": "つめたっ……！"}
+      ],
+      "next": "punish_route_denmoku"
+    },
+    {
+      "id": "punish_glass_leak",
+      "type": "conversation",
+      "events": [
+        {"type": "line", "speaker": "keiko", "text": "……たしかに。怒られるの、私か"},
+        {"type": "foreground", "image": "fg_spank_glass", "cut": true},
+        {"type": "se", "audio": "se_confirm_low"},
+        {"type": "score", "reason": "evaded", "points": 100, "composure": 0}
+      ],
+      "next": "punish_route_denmoku"
+    },
+    {
+      "id": "punish_denmoku",
+      "type": "conversation",
+      "events": [
+        {"type": "foreground", "image": "fg_spank_denmoku"},
+        {"type": "scene_title", "text": "【使用道具】デンモク"},
+        {"type": "line", "speaker": "keiko", "text": "デンモク。ずっしりしてるよ？"},
+        {"type": "foreground", "image": "fg_spank_denmoku_ready", "cut": true},
+        {"type": "line", "speaker": "keiko", "text": "これで叩いたら、どうなるかな", "pause_before": 0.3}
+      ],
+      "next": "punish_denmoku_choice"
+    },
+    {
+      "id": "punish_denmoku_choice",
+      "type": "choice",
+      "speaker": "nega",
+      "placement": "low",
+      "options": [
+        {"id": "denmoku_accept", "text": "……好きにしろよ", "next": "punish_denmoku_accept"},
+        {"id": "denmoku_injury", "text": "それはケガするって", "next": "punish_denmoku_injury"}
+      ]
+    },
+    {
+      "id": "punish_denmoku_accept",
+      "type": "conversation",
+      "events": [
+        {"type": "line", "speaker": "keiko", "text": "じゃあ、遠慮なく"},
+        {"type": "foreground", "image": "fg_spank_denmoku_raise", "cut": true},
+        {"type": "wait", "seconds": 0.5},
+        {"type": "line", "speaker": "keiko", "text": "……重っ"},
+        {"type": "foreground", "image": "fg_spank_denmoku", "cut": true},
+        {"type": "se", "audio": "se_bump"},
+        {"type": "still", "image": "cg_spank_denmoku"},
+        {"type": "effect", "effect": "fx_bump"},
+        {"type": "score", "reason": "endured", "points": 80, "composure": 0},
+        {"type": "line", "speaker": "nega", "text": "自分で落としてるし……"}
+      ],
+      "next": "punish_route_menu_stand"
+    },
+    {
+      "id": "punish_denmoku_injury",
+      "type": "conversation",
+      "events": [
+        {"type": "line", "speaker": "keiko", "text": "……たしかに"},
+        {"type": "line", "speaker": "keiko", "text": "SMは、安全第一だもんね"},
+        {"type": "foreground", "image": "fg_spank_denmoku", "cut": true},
+        {"type": "se", "audio": "se_confirm_low"},
+        {"type": "score", "reason": "evaded", "points": 150, "composure": 0}
+      ],
+      "next": "punish_route_menu_stand"
+    },
+    {
+      "id": "punish_menu_stand",
+      "type": "conversation",
+      "events": [
+        {"type": "foreground", "image": "fg_spank_menu_stand"},
+        {"type": "scene_title", "text": "【使用道具】メニュー立て"},
+        {"type": "line", "speaker": "keiko", "text": "メニュー立て。本日のおすすめは……角かな"},
+        {"type": "foreground", "image": "fg_spank_menu_stand_ready", "cut": true}
+      ],
+      "next": "punish_menu_stand_choice"
+    },
+    {
+      "id": "punish_menu_stand_choice",
+      "type": "choice",
+      "speaker": "nega",
+      "placement": "low",
+      "options": [
+        {"id": "menu_accept", "text": "……せめて、平らなほうで", "next": "punish_menu_stand_accept"},
+        {"id": "menu_first", "text": "メニューで叩く人なんていないだろ", "next": "punish_menu_stand_first"}
+      ]
+    },
+    {
+      "id": "punish_menu_stand_accept",
+      "type": "conversation",
+      "events": [
+        {"type": "line", "speaker": "keiko", "text": "注文、承りました"},
+        {"type": "foreground", "image": "fg_spank_menu_stand_raise", "cut": true},
+        {"type": "se", "audio": "se_table_touch"},
+        {"type": "still", "image": "cg_spank_menu_stand"},
+        {"type": "effect", "effect": "fx_bump"},
+        {"type": "score", "reason": "endured", "points": 100, "composure": -5},
+        {"type": "line", "speaker": "keiko", "text": "……軽っ。全然しならない"}
+      ],
+      "next": "punish_route_mic"
+    },
+    {
+      "id": "punish_menu_stand_first",
+      "type": "conversation",
+      "events": [
+        {"type": "line", "speaker": "keiko", "text": "じゃあ、ネガくんが一人目じゃん"},
+        {"type": "foreground", "image": "fg_spank_menu_stand_raise", "cut": true},
+        {"type": "se", "audio": "se_table_touch"},
+        {"type": "still", "image": "cg_spank_menu_stand"},
+        {"type": "effect", "effect": "fx_bump"},
+        {"type": "score", "reason": "endured", "points": 80, "composure": -5},
+        {"type": "line", "speaker": "keiko", "text": "……効いてないんだ。つまんなーい"}
+      ],
+      "next": "punish_route_mic"
+    },
+    {
+      "id": "punish_mic",
+      "type": "conversation",
+      "events": [
+        {"type": "foreground", "image": "fg_spank_mic"},
+        {"type": "scene_title", "text": "【使用道具】マイク"},
+        {"type": "line", "speaker": "keiko", "text": "外から人の話し声聞こえるね。あんたの声も外に響き渡ってるんだよ"},
+        {"type": "line", "speaker": "keiko", "text": "あんたってみんなにアピールしたいタイプなんだね、自分はこれで喜ぶ変態ですって"},
+        {"type": "foreground", "image": "fg_spank_mic_ready", "cut": true},
+        {"type": "line", "speaker": "keiko", "text": "こんなので喜んでごめんなさいって言いなよ～ほら、みんなに聞いて欲しいんでしょ"}
+      ],
+      "next": "punish_mic_choice"
+    },
+    {
+      "id": "punish_mic_choice",
+      "type": "choice",
+      "speaker": "nega",
+      "placement": "low",
+      "options": [
+        {"id": "mic_accept", "text": "……小声でなら", "next": "punish_mic_accept"},
+        {"id": "mic_safeword", "text": "セーフワード！", "next": "punish_mic_safeword"},
+        {"id": "mic_refuse", "text": "絶対に言わない", "next": "punish_mic_refuse"}
+      ]
+    },
+    {
+      "id": "punish_mic_accept",
+      "type": "conversation",
+      "events": [
+        {"type": "line", "speaker": "keiko", "text": "小声は、ナシ"},
+        {"type": "line", "speaker": "nega", "text": "……………………", "speed": 0.6},
+        {"type": "effect", "effect": "fx_flash_white"},
+        {"type": "still", "image": "cg_spank_mic"},
+        {"type": "score", "reason": "endured", "points": 100, "composure": -25},
+        {"type": "line", "speaker": "keiko", "text": "そんなに自分の恥ずかしいとこみんなに聞いて欲しかったの？"}
+      ],
+      "next": "punish_end"
+    },
+    {
+      "id": "punish_mic_safeword",
+      "type": "conversation",
+      "events": [
+        {"type": "line", "speaker": "keiko", "text": "……え"},
+        {"type": "wait", "seconds": 0.4},
+        {"type": "line", "speaker": "keiko", "text": "決めてなかったでしょ、そんなの"},
+        {"type": "line", "speaker": "nega", "text": "決めてないほうが悪い"},
+        {"type": "foreground", "image": "fg_spank_mic", "cut": true},
+        {"type": "se", "audio": "se_confirm_low"},
+        {"type": "score", "reason": "evaded", "points": 150, "composure": 0},
+        {"type": "line", "speaker": "keiko", "text": "……ずるい"}
+      ],
+      "next": "punish_end"
+    },
+    {
+      "id": "punish_mic_refuse",
+      "type": "conversation",
+      "events": [
+        {"type": "line", "speaker": "keiko", "text": "言えないなら……"},
+        {"type": "line", "speaker": "keiko", "text": "マイクの、こっちの使い方しかないよ？", "hold": 0.3},
+        {"type": "foreground", "image": "fg_spank_mic_raise", "cut": true},
+        {"type": "se", "audio": "se_mic_hit"},
+        {"type": "effect", "effect": "fx_shake_small"},
+        {"type": "score", "reason": "struck", "points": -50, "composure": -30},
+        {"type": "line", "speaker": "nega", "text": "ぐっ……！", "size": 1.1, "shake": 1.0}
+      ],
+      "next": "punish_end"
+    },
+    {
+      "id": "punish_bare",
+      "type": "conversation",
+      "events": [
+        {"type": "line", "speaker": "keiko", "text": "全部見つけちゃったから、使う道具、ないじゃん"},
+        {"type": "line", "speaker": "keiko", "text": "……じゃあ、手でいっか", "pause_before": 0.4},
+        {"type": "scene_title", "text": "【使用道具】素手"}
+      ],
+      "next": "punish_bare_choice"
+    },
+    {
+      "id": "punish_bare_choice",
+      "type": "choice",
+      "speaker": "nega",
+      "placement": "low",
+      "options": [
+        {"id": "bare_endure", "text": "……優しくしてください", "next": "punish_bare_endure"},
+        {"id": "bare_protest", "text": "話が違うじゃないか！", "next": "punish_bare_protest"}
+      ]
+    },
+    {
+      "id": "punish_bare_endure",
+      "type": "conversation",
+      "events": [
+        {"type": "line", "speaker": "keiko", "text": "そういうとこ、めっちゃダサくて、かっわいい", "speed": 1.15},
+        {"type": "se", "audio": "se_sweep"},
+        {"type": "still", "image": "cg_spank_bare"},
+        {"type": "effect", "effect": "fx_bump"},
+        {"type": "score", "reason": "endured", "points": 100, "composure": -10}
+      ],
+      "next": "punish_end"
+    },
+    {
+      "id": "punish_bare_protest",
+      "type": "conversation",
+      "events": [
+        {"type": "line", "speaker": "keiko", "text": "全部見つけたんだもん。ごほうび、全部あげなきゃ"},
+        {"type": "se", "audio": "se_sweep"},
+        {"type": "effect", "effect": "fx_shake_small"},
+        {"type": "score", "reason": "struck", "points": -50, "composure": -15},
+        {"type": "line", "speaker": "nega", "text": "いてっ……！"}
+      ],
+      "next": "punish_end"
+    },
+    {
+      "id": "punish_end",
+      "type": "conversation",
+      "events": [
+        {"type": "foreground", "image": "fg_spank_bare"},
+        {"type": "line", "speaker": "keiko", "text": "はい、おしまい"},
+        {"type": "line", "speaker": "keiko", "text": "ネガくん、やっぱり才能あるよ"}
+      ],
+      "next": "conversation_close"
+    },
+    {
+      "id": "conversation_close",
+      "type": "conversation",
+      "events": [
+        {"type": "bgm_stop", "fade": 1.5},
+        {"type": "ambience_stop", "fade": 1.5},
+        {"type": "effect", "effect": "fx_fade_out_black"}
+      ],
+      "ends_chapter": true
+    }
+  ]
+}

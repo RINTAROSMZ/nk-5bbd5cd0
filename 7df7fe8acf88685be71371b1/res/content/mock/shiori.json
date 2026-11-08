@@ -1,0 +1,36 @@
+{
+  "_doc": "間の章「しおり」のモック（docs/mock_chapters.md）。ケイコの描いた絵本を 2 人で読む。押さえる・めくるは長く押すほど強い。値・文・台詞はすべて仮置き（人が詰める）。kind：null＝ふつうに読む、hold＝ケイコが好きなページを押さえる（押し返すとケイコが自分から手を離す）、flip＝ケイコが先にめくろうとする（押さえ続けると「見たい？」と聞き、ケイコが手を離す）、cover＝ケイコが行を隠す（越えない限界。力ではどけられない）、blank＝最後の 1 行を選ぶ",
+  "title": "絵本「おなじ朝」　ケイコが描いた",
+  "background": "bg_library",
+  "hold_ramp_seconds": 0.5,
+  "reveal_chars_per_second": 16,
+  "pages": [
+    {"kind": "", "image": "shiori_page_1", "lines": ["女の子は、毎朝", "同じ時間に目を覚ました。", "窓の外を、男の子が", "通っていく。"]},
+    {"kind": "hold", "image": "shiori_page_2", "lines": ["ある朝、女の子は", "男の子に声をかけた。", "2人は、駅まで", "一緒に歩いた。"]},
+    {"kind": "flip", "image": "shiori_page_3", "lines": ["女の子は、同じ朝を", "何度も繰り返していた。", "男の子が駅へ", "行ってしまう前の朝を。"]},
+    {"kind": "cover", "image": "shiori_page_4", "lines": ["女の子は、", "置いていかれる前に、", "最初の朝に戻ることに", "した。"], "covered_lines": [1, 2]},
+    {"kind": "blank", "image": "", "lines": ["（最後のページは、まだ描いてない）"]}
+  ],
+  "last_lines": ["男の子は、次の朝も来た", "女の子は、もう戻らなかった", "（白紙のままにする）"],
+  "hold": {"wait_seconds": 4.0, "ask_after": 0.9, "release_after": 1.6},
+  "flip": {"start_at": 0.4, "keiko_pull": 0.75, "keiko_pull_asked": 0.15, "ask_after": 1.1, "answer_window": 1.4, "rate": 1.4},
+  "cover": {"ask_after": 1.0},
+  "lines": {
+    "hold_start": "このページ、好きなの。もうちょっと見てて",
+    "hold_ask": "……そんなに？",
+    "hold_release": "……いいよ。めくって",
+    "flip_ask": "……見たい？",
+    "flip_yield": "……いいよ",
+    "flip_cut": "……ありがと",
+    "flip_overrun": "私が、めくっちゃった。……ごめん",
+    "cover_start": "ここは、見ないで",
+    "cover_refuse": "ここは、ごめん",
+    "cover_thanks": "……ありがと",
+    "blank_pick": "それが、最後",
+    "blank_white": "……白紙、か",
+    "stopped": "言ってくれて、ありがとう",
+    "end_pushed": "押し返されるの、ちょっとうれしかった",
+    "end_waited": "待ってくれて、ありがとう",
+    "end_read": "読んでくれて、ありがとう"
+  }
+}
