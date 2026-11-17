@@ -1,0 +1,18 @@
+{
+  "id": "ekimade_after",
+  "directory": "res://res/comic/chapter_01",
+  "_entry": "2026-11-14 第 3 版 A：ゲームの画面から入るときは、ゲーム → 漫画の幕間（片付け → 組み立て。settings/ui_alpha.json の curtain.strike・curtain.build）。panel は受け取った窓がなるコマ（空なら読み始めの位置で見える最初のコマ）。",
+  "entry": {"type": "curtain"},
+  "_exit": "2026-11-14 第 3 版 B：終わりのボタンで、漫画の舞台の入れ替え（前の話のコマを引き出し、しおりの UI を置く。settings/ui_alpha.json の curtain.swap・curtain.place）で次の段（しおり）へ。",
+  "exit": {"type": "swap"},
+  "end_label": "つづきを読む",
+  "panel_layout": {
+    "directory": "res://res/comic/chapter_01/panels",
+    "layout_width": 1080, "source_page_width": 1240, "max_panel_width": 1000, "max_zoom": 1.6,
+    "gap": 90, "head_gap": 700, "tail_gap": 260,
+    "paper": "@comic_paper",
+    "panels": [
+      {"id": "p3_20"}
+    ]
+  }
+}

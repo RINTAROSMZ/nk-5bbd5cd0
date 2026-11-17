@@ -1,0 +1,16 @@
+{
+  "colors": {
+    "comic_paper": "#ffffff",
+    "comic_night": "#060608",
+    "neon_blue": "#40d8ff",
+    "ink": "#29201f",
+    "paper": "#f4ece6",
+    "lamp": "#ffe8cc",
+    "haze": "#b8b0d8",
+    "accent_gold": "#c7b36b",
+    "danger": "#ff4455",
+    "emergency": "#c2d0c8",
+    "exit_glow": "#7ad4a6",
+    "dusk_mauve": "#6c5b78"
+  }
+}

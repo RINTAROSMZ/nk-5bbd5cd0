@@ -1,0 +1,20 @@
+NegaDotMincho24 — FONTLOG
+
+This font is a Modified Version of EnkaDotMincho24 (縁架ドット明朝24) Ver.1.2
+by Enthiesia (https://enth-imaginary-rail.jp/), licensed under the
+SIL Open Font License, Version 1.1 (see OFL.txt in this folder).
+
+Because '縁架' and 'Enka' are Reserved Font Names, this Modified Version is
+renamed to NegaDotMincho24.
+
+Changes (2026-10-01, for mockgame):
+- Code points that the original cmap mapped to empty glyphs (characters the
+  original font does not draw, e.g. 傾 即 択 ／) were removed from cmap, so that
+  the game engine falls back to a system font instead of drawing nothing.
+- cmap was rebuilt as format 4 for (0,3) and (3,1); the Mac (1,0) format 6
+  subtable was dropped.
+- The name table was rewritten with the new family name, the original
+  copyright notice, and the license notice.
+- No glyph outlines, bitmaps or metrics were changed.
+
+Tool: tools/asset_prep/patch_dot_font.py (source: res/fonts/source/EnkaDotMincho24.ttf)

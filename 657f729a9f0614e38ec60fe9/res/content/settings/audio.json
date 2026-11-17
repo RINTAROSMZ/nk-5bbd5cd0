@@ -1,0 +1,53 @@
+{
+  "_doc": "音の鳴らし方（docs/sound_design.md §4.2・§4.3・§7.6 の T1〜T11）。値はすべて仮置き（2026-11-13。誰も実機で聞いていない。人が聞いて詰める）。Zod は web/src/content/audio_settings.ts、鳴らすのは web/src/platform/audio_director.ts。",
+  "_buses": "系統（バス）ごとの音量（dB）。効果音・文字送り・UI の −2.5 は、これまでの ui.json の se_volume（0.75）の置き換え（T5）。",
+  "buses": {"bgm": 0, "ambience": 0, "se": -2.5, "type": -2.5, "ui": -2.5},
+  "_ui_se": "UI の系統に通す効果音（押す音。ui.json の press_se）。",
+  "ui_se": ["se_select"],
+  "_duck": "効果音が鳴る瞬間に、ほかの系統を db だけ下げる（attack 秒で下げ、hold 秒保ち、release 秒で戻す。T6）。叩く音は 0 dB（仕組みだけ。人が −6 を試す）。通知は上げているときだけ（下げているときは鳴らす側がダッキングを外す）。",
+  "duck": [
+    {"se": ["se_awaken", "se_sweep", "se_bump", "se_table_touch", "se_mic_hit"], "buses": ["bgm"], "db": 0, "attack": 0.01, "hold": 0.3, "release": 0.5},
+    {"se": ["se_eki2_notify"], "buses": ["bgm", "ambience"], "db": -6, "attack": 0.05, "hold": 0.6, "release": 0.8}
+  ],
+  "_limiter": "最終段のリミッター（T7）。上限 −1 dBFS、立ち上がり 3 ms、戻り 100 ms。",
+  "limiter": {"enabled": true, "threshold_db": -1, "attack": 0.003, "release": 0.1},
+  "_se_voices": "効果音の同時数と、足りないときにも奪わない音（T8）。",
+  "se_voices": 8,
+  "protected_se": ["se_awaken", "se_sweep", "se_power_down", "se_mic_hit", "se_eki2_notify", "se_finale_peel"],
+  "_tempo": "曲の拍（tools/audio_prep/sound2026/scores/<ID>.json の bpm・meter。offset は最初の拍の秒で、どれも頭から 0）。meter のない曲は 4 と仮置き。",
+  "tempo": {
+    "bgm_ch1_open": {"bpm": 60, "meter": 4, "offset": 0},
+    "bgm_ch1_explain": {"bpm": 72, "meter": 4, "offset": 0},
+    "bgm_ch1_explore": {"bpm": 128.57, "meter": 4, "offset": 0},
+    "bgm_ch1_reward": {"bpm": 84, "meter": 4, "offset": 0},
+    "bgm_ch1_score": {"bpm": 76, "meter": 4, "offset": 0},
+    "bgm_ch1_title": {"bpm": 70, "meter": 4, "offset": 0},
+    "bgm_eki2_keiko": {"bpm": 80, "meter": 4, "offset": 0},
+    "bgm_eki2_arrive": {"bpm": 80, "meter": 4, "offset": 0},
+    "bgm_finale_soot": {"bpm": 80, "meter": 4, "offset": 0},
+    "bgm_finale_released": {"bpm": 80, "meter": 4, "offset": 0},
+    "bgm_finale_stage_found": {"bpm": 80, "meter": 4, "offset": 0},
+    "bgm_finale_stage_lie": {"bpm": 80, "meter": 4, "offset": 0},
+    "bgm_finale_end_normal": {"bpm": 80, "meter": 4, "offset": 0},
+    "bgm_finale_end_true": {"bpm": 88, "meter": 4, "offset": 0}
+  },
+  "_align": "鳴らすときに、鳴っている曲（BGM の系統）の次の拍（beat）・小節の頭（bar）まで待つ音（T9）。褒める 1 発は拍（小節の頭まで待つと最大 3 秒ほど遅れて、台詞とずれるため）。駅までの着いた曲は、ケイコの層の小節の頭で鳴らす今の作りのまま（層は BGM の系統の曲ではないので、ここでは待たない）。",
+  "align": {"se_praise_sting": "beat", "bgm_eki2_arrive": "bar"},
+  "_ring_out": "曲を止める指示（漫画へ移るときなど）が来ても、最後まで鳴らす 1 回きりの曲（T10。駅までの着いた曲が漫画へ移るときに切れないように）。",
+  "ring_out": ["bgm_eki2_arrive"],
+  "_pause_when_hidden": "画面が見えなくなったら（アプリの裏・タブの切り替え）音を止め、戻ったら再開する（T11）。",
+  "pause_when_hidden": true,
+  "_flow": "画面の移り変わりでの曲・環境音の秒（T10。AppFlow・各画面の直書きを移した）。comic_out は漫画へ入るときに下げきる秒（comic_start の覆いの 0.45 秒）、comic_bgm_in は曲のある漫画で上げる秒、game_in_out は漫画からチャプター・駅までへ移るときに下げる秒、score_* は第 1 章 → スコア（曲・環境音を 1.5 秒で下げ、スコアの曲を 1.0 秒で上げる）、title_* はタイトルへ戻るとき（前の曲を 1.2 秒で下げ、タイトルの曲を 1.0 秒で上げる）、abort_out はやめてタイトルへ（0 で即座に。今のまま）、ekimade_exit は駅までの画面を離れるとき。ゲーム → 漫画の幕間（片付け）でゲームの曲・環境音を下げるのは、2026-11-15 から ui_alpha.json の curtain.music.strike（前の strike_out_seconds の代わり）。",
+  "flow": {
+    "comic_out_seconds": 0.45,
+    "comic_bgm_in_seconds": 1.0,
+    "game_in_out_seconds": 0.6,
+    "score_out_seconds": 1.5,
+    "score_bgm_in_seconds": 1.0,
+    "score_bgm_delay_seconds": 0,
+    "title_out_seconds": 1.2,
+    "title_bgm_in_seconds": 1.0,
+    "abort_out_seconds": 0,
+    "ekimade_exit_seconds": 1.0
+  }
+}

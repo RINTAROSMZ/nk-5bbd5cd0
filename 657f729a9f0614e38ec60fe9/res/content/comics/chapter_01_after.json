@@ -1,0 +1,32 @@
+{
+  "id": "chapter_01_after",
+  "directory": "res://res/comic/chapter_01",
+  "_entry": "2026-11-14 第 3 版 A：ゲームの画面から入るときは、ゲーム → 漫画の幕間（片付け → 組み立て。settings/ui_alpha.json の curtain.strike・curtain.build）。panel は受け取った窓がなるコマ（空なら読み始めの位置で見える最初のコマ）。",
+  "entry": {"type": "curtain"},
+  "panel_layout": {
+    "directory": "res://res/comic/chapter_01/panels",
+    "layout_width": 1080, "source_page_width": 1240, "max_panel_width": 1000, "max_zoom": 1.6,
+    "gap": 90, "head_gap": 900, "tail_gap": 260,
+    "paper": "@comic_night",
+    "panels": [
+      {"id": "p2_10", "tone": "@comic_night"},
+      {"id": "p2_11", "gap": 1000, "tone": "@comic_paper"},
+      {"id": "p3_12", "gap": 380},
+      {"id": "p3_13", "gap": 70},
+      {"id": "p3_14", "gap": 70},
+      {"id": "p3_15", "gap": 240},
+      {"id": "p3_16", "gap": 70},
+      {"id": "p3_17", "gap": 70},
+      {"id": "p3_18", "gap": 130},
+      {"id": "p3_19_gate", "gap": 280}
+    ]
+  },
+  "gate": {
+    "at_end": true,
+    "steps": [
+      {"type": "catch", "seconds": 0.6, "easing": "cubic_out"},
+      {"type": "wait", "seconds": 0.35},
+      {"type": "curtain", "panel": "p3_19_gate", "wait_tap": true}
+    ]
+  }
+}
